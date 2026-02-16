@@ -1,0 +1,59 @@
+{
+    "city": "Liberec",
+    "date": "24. března 2026",
+    "time": "09:30",
+    "venue": "Pytloun Grand Hotel Imperial",
+    "capacity": 50,
+    "registered": 10,
+    "promo_title": "Jarní roadshow: Maruška je skvělá",
+    "promo_text": "Přicházíme do vašeho regionu. Legislativní novinky, práce s cenou a technologie, které vám uvolní ruce.",
+    "program_connect": [
+        {
+            "time": "09:30",
+            "title": "Uvítání hostů & Ranní káva ☕",
+            "desc": "Neformální start dne a seznámení."
+        },
+        {
+            "time": "10:00",
+            "title": "Novinky ze světa turizmu",
+            "desc": "Aktuální témata, legislativní strašáci (e-Turista) a lokální statistiky."
+        },
+        {
+            "time": "10:30",
+            "title": "Jak řídit provoz efektivně",
+            "desc": "Práce s cenou, psychologie hosta a co musí obsahovat moderní web."
+        },
+        {
+            "time": "11:15",
+            "title": "Praktická ukázka řešení",
+            "desc": "Zvýšení přímých rezervací a automatizace admin tasků."
+        },
+        {
+            "time": "12:00 +",
+            "title": "Networking",
+            "desc": "Prostor pro otázky a setkání s kolegy u občerstvení."
+        }
+    ],
+    "program_prolite": [
+        {
+            "time": "13:00",
+            "title": "Networking & Káva",
+            "desc": "Přivítání stávajících uživatelů Previa."
+        },
+        {
+            "time": "13:30",
+            "title": "Novinky & Legislativa",
+            "desc": "Co je nového v systému a příprava na e-Turistu pro pokročilé."
+        },
+        {
+            "time": "14:15",
+            "title": "Budoucnost: P2 a AI",
+            "desc": "Nová verze P2 a praktické využití AI modelů v hotelu."
+        },
+        {
+            "time": "15:00 +",
+            "title": "Workshopy",
+            "desc": "Individuální konzultace s experty na nastavení systému."
+        }
+    ]
+}
