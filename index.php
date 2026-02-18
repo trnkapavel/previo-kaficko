@@ -297,7 +297,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             .benefit-text h3 { font-size: 1.4rem; line-height: 1.1; }
             .intro-item h3 { font-size: 1.15rem; line-height: 1.1; }
             .section-title { font-size: 1.6rem; line-height: 1.1; margin-bottom: 40px; }
-            .benefit-image { height: 280px; }
+            .benefit-image { height: 280px; width: 100%; flex: 1; display: block; }
             .benefit-image.revenue { background-position: center 48%; }
             .benefit-image.legislation { background-position: center 40%; }
             .benefit-image.ai { background-position: center 32%; }
