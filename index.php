@@ -277,6 +277,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             .btn-main, .btn-secondary { padding: 12px 24px; font-size: 0.95rem; }
             .stats-grid { grid-template-columns: 1fr; gap: 40px; }
             .benefit-large-block, .benefit-large-block:nth-child(even) { flex-direction: column; gap: 40px; text-align: center; }
+            .benefit-card { position: relative; top: auto; transform: none !important; opacity: 1 !important; }
             .benefit-image { height: 320px; width: 100%; }
             .hw-block { flex-direction: column; }
             .hw-image { min-height: 300px; }
@@ -297,6 +298,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             .benefit-text h3 { font-size: 1.4rem; line-height: 1.1; }
             .intro-item h3 { font-size: 1.15rem; line-height: 1.1; }
             .section-title { font-size: 1.6rem; line-height: 1.1; margin-bottom: 40px; }
+            .benefit-card { position: relative !important; transform: none !important; opacity: 1 !important; box-shadow: none; z-index: auto !important; }
             .benefit-image { height: 280px; width: 100%; flex: 1; display: block; }
             .benefit-image.revenue { background-position: center 48%; }
             .benefit-image.legislation { background-position: center 40%; }
