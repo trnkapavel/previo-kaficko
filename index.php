@@ -139,7 +139,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
         .section-title { font-size: 3rem; text-align: center; margin-bottom: 80px; }
 
         .intro-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 60px; margin-bottom: 100px; }
-        .intro-item h3 { font-size: 1.8rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .intro-item h3 { font-size: 1.8rem; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; line-height: 1.0; }
         .benefit-stack { position: relative; }
         .benefit-large-block { display: flex; align-items: center; gap: 64px; margin-bottom: 32px; background: var(--white); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: 34px; }
         .benefit-card { position: sticky; top: 110px; z-index: 1; transition: transform 0.35s ease, box-shadow 0.35s ease, opacity 0.35s ease; }
@@ -158,7 +158,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
         .benefit-image.ai { background-position: center 38%; }
         .benefit-large-block:hover .benefit-image { transform: translateY(-2px); box-shadow: 0 24px 44px rgba(15, 23, 42, 0.1); }
         .benefit-text { flex: 1; }
-        .benefit-text h3 { font-size: 2.5rem; margin-bottom: 25px; }
+        .benefit-text h3 { font-size: 2.5rem; margin-bottom: 25px; line-height: 1.0; }
         .benefit-text ul { list-style: none; margin-top: 30px; }
         .benefit-text li { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-weight: 600; }
         .benefit-text li::before { content: '✓'; color: var(--primary); font-weight: 900; }
@@ -272,8 +272,8 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             .hero-actions { flex-direction: row; align-items: center; gap: 12px; }
             .section-title { font-size: 2rem; margin-bottom: 50px; line-height: 1.1; }
             .section-tag { font-size: 0.8rem; }
-            .intro-item h3 { font-size: 1.3rem; line-height: 1.1; }
-            .benefit-text h3 { font-size: 1.6rem; line-height: 1.1; margin-bottom: 15px; }
+            .intro-item h3 { font-size: 1.3rem; line-height: 0.95; }
+            .benefit-text h3 { font-size: 1.6rem; line-height: 0.95; margin-bottom: 15px; }
             .btn-main, .btn-secondary { padding: 12px 24px; font-size: 0.95rem; }
             .stats-grid { grid-template-columns: 1fr; gap: 40px; }
             .benefit-large-block, .benefit-large-block:nth-child(even) { flex-direction: column; gap: 40px; text-align: center; }
@@ -296,8 +296,8 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
         }
         @media (max-width: 768px) {
             .hero h1 { font-size: 2.2rem; line-height: 1.1; }
-            .benefit-text h3 { font-size: 1.4rem; line-height: 1.1; }
-            .intro-item h3 { font-size: 1.15rem; line-height: 1.1; }
+            .benefit-text h3 { font-size: 1.4rem; line-height: 0.95; }
+            .intro-item h3 { font-size: 1.15rem; line-height: 0.95; }
             .section-title { font-size: 1.6rem; line-height: 1.1; margin-bottom: 40px; }
             .benefit-card { position: static !important; transform: none !important; opacity: 1 !important; box-shadow: none !important; z-index: auto !important; }
             .benefit-card:not(.is-active) { transform: none !important; opacity: 1 !important; }
