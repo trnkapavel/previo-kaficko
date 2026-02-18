@@ -1,11 +1,11 @@
 {
-    "city": "Liberec",
+    "city": "Opava",
     "date": "24. března 2026",
     "time": "09:30",
     "venue": "Pytloun Grand Hotel Imperial",
-    "capacity": 50,
+    "capacity": 70,
     "registered": 10,
-    "promo_title": "Jarní roadshow: Maruška je skvělá",
+    "promo_title": "Jarní roadshow: Název",
     "promo_text": "Přicházíme do vašeho regionu. Legislativní novinky, práce s cenou a technologie, které vám uvolní ruce.",
     "program_connect": [
         {
