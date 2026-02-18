@@ -513,7 +513,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
     <section id="lokalita" class="teaser-section">
         <div class="teaser-grid reveal">
             <div class="teaser-text">
-                <span class="section-tag" style="text-align: left;">Příští zastávka</span>
+                <span class="section-tag" style="text-align: left;">Aktuální zastávka</span>
                 <h2 style="font-size: 3rem; font-family: 'Source Sans 3'; margin-bottom: 30px;">Potkáme se v: <br><span style="color: var(--primary);"><?= htmlspecialchars($data['city']) ?></span></h2>
                 <p style="font-size: 1.2rem; opacity: 0.8; margin-bottom: 40px;">Těšíme se na vás v hotelu <?= htmlspecialchars($data['venue']) ?>.</p>
                 <div style="background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display: inline-block;">
