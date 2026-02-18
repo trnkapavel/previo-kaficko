@@ -149,7 +149,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
         .benefit-card.is-active { transform: translateY(0) scale(1); box-shadow: 0 20px 44px rgba(15, 23, 42, 0.12); opacity: 1; }
         .benefit-card:not(.is-active) { transform: translateY(6px) scale(0.985); opacity: 0.95; }
         .benefit-large-block.benefit-soft { background: var(--gray-light); }
-        .benefit-image { flex: 1; height: 380px; background-color: #eef2f7; border-radius: var(--radius-md); border: 1px solid var(--color-border); background-size: cover; background-position: center; box-shadow: 0 18px 32px rgba(15, 23, 42, 0.06); transition: 0.3s ease; }
+        .benefit-image { flex: 1; height: 380px; min-height: 280px; background-color: #eef2f7; border-radius: var(--radius-md); border: 1px solid var(--color-border); background-size: cover; background-position: center; box-shadow: 0 18px 32px rgba(15, 23, 42, 0.06); transition: 0.3s ease; }
         .benefit-image.revenue { background-image: url('img/rust-trzeb.jpg'); }
         .benefit-image.legislation { background-image: url('img/legislativa-eturista.jpg'); }
         .benefit-image.ai { background-image: url('img/ai-automatizace.jpg'); }
@@ -277,8 +277,9 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             .btn-main, .btn-secondary { padding: 12px 24px; font-size: 0.95rem; }
             .stats-grid { grid-template-columns: 1fr; gap: 40px; }
             .benefit-large-block, .benefit-large-block:nth-child(even) { flex-direction: column; gap: 40px; text-align: center; }
-            .benefit-card { position: relative; top: auto; transform: none !important; opacity: 1 !important; }
-            .benefit-image { height: 320px; width: 100%; }
+            .benefit-card { position: relative !important; top: auto !important; transform: none !important; opacity: 1 !important; box-shadow: none !important; z-index: auto !important; }
+            .benefit-card:not(.is-active) { transform: none !important; }
+            .benefit-image { height: 320px; width: 100%; visibility: visible !important; display: block !important; }
             .hw-block { flex-direction: column; }
             .hw-image { min-height: 300px; }
             .teaser-grid { grid-template-columns: 1fr; text-align: center; }
@@ -298,8 +299,9 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             .benefit-text h3 { font-size: 1.4rem; line-height: 1.1; }
             .intro-item h3 { font-size: 1.15rem; line-height: 1.1; }
             .section-title { font-size: 1.6rem; line-height: 1.1; margin-bottom: 40px; }
-            .benefit-card { position: relative !important; transform: none !important; opacity: 1 !important; box-shadow: none; z-index: auto !important; }
-            .benefit-image { height: 280px; width: 100%; flex: 1; display: block; }
+            .benefit-card { position: static !important; transform: none !important; opacity: 1 !important; box-shadow: none !important; z-index: auto !important; }
+            .benefit-card:not(.is-active) { transform: none !important; opacity: 1 !important; }
+            .benefit-image { height: 280px !important; width: 100% !important; flex: 1 !important; display: block !important; visibility: visible !important; }
             .benefit-image.revenue { background-position: center 48%; }
             .benefit-image.legislation { background-position: center 40%; }
             .benefit-image.ai { background-position: center 32%; }
