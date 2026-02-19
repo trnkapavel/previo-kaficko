@@ -39,7 +39,7 @@ if (isset($_POST['login'])) {
     if ($_POST['password'] === 'previo') { // ZMĚŇTE HESLO
         $_SESSION['logged_in'] = true;
     } else {
-        $error = "Špatné heslo!";
+        $error = "Zadané heslo není správné.";
     }
 }
 
@@ -67,7 +67,7 @@ if (isset($_POST['save']) && isset($_SESSION['logged_in'])) {
     } else {
         $writeResult = file_put_contents($file, $jsonString);
         if ($writeResult !== false) {
-            $success = "✅ Data a program byly úspěšně uloženy! (" . $writeResult . " bytů zapsáno)<br>";
+            $success = "✅ Data byla úspěšně uložena (" . $writeResult . " bytů zapsáno).<br>";
             $success .= "Soubor: " . realpath($file) . "<br>";
             $success .= "Čas uložení: " . date('d.m.Y H:i:s');
             // Znovu načíst data po uložení
@@ -75,7 +75,7 @@ if (isset($_POST['save']) && isset($_SESSION['logged_in'])) {
             $json_content = file_get_contents($file);
             $data = json_decode($json_content, true);
         } else {
-            $error = "❌ Chyba při ukládání souboru data.json! Zkontrolujte oprávnění k zápisu.";
+            $error = "❌ Při ukládání souboru data.json došlo k chybě. Zkontrolujte oprávnění k zápisu.";
         }
     }
 }
@@ -148,14 +148,14 @@ if (!isset($data)) {
 <body>
 
 <div class="container">
-    <h2>Administrace MeetUpu</h2>
+    <h2>Administrace MeetUp</h2>
 
     <?php if (!isset($_SESSION['logged_in'])): ?>
         <?php if (isset($error)) echo "<div class='alert error'>$error</div>"; ?>
         <form method="POST">
             <label>Heslo:</label>
             <input type="password" name="password" required>
-            <button type="submit" name="login">Vstoupit</button>
+            <button type="submit" name="login">Přihlásit se</button>
         </form>
     <?php else: ?>
         
