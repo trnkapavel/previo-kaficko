@@ -592,7 +592,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
                             <option value="both">Celý den</option>
                         </select>
                         <input type="text" name="diet" placeholder="Dietní omezení (např. bezlepek)" class="full-width">
-                        <textarea name="question" rows="3" placeholder="Vaše dotazy nebo co vás nejvíce pálí..." class="full-width"></textarea>
+                        <textarea name="question" rows="3" placeholder="Vaše dotazy nebo témata, která chcete na akci řešit..." class="full-width"></textarea>
                         
                         <button type="submit" class="btn-main full-width" style="margin-top: 10px; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Odeslat závaznou registraci</button>
                     </div>
@@ -606,8 +606,8 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
         <div class="faq-container">
             <span class="section-tag">Vše, co potřebujete vědět</span>
             <h2 class="section-title" style="margin-bottom: 50px;">Časté dotazy</h2>
-            <div class="faq-item"><span class="faq-question">Bude z akce záznam?</span><p class="faq-answer">Tentokrát se potkáváme výhradně naživo. Videozáznam neplánujeme, ale pošleme materiály.</p></div>
-            <div class="faq-item"><span class="faq-question">Mohu vzít kolegu?</span><p class="faq-answer">Určitě ano. Prosíme jen, abyste každou osobu zaregistrovali zvlášť kvůli kapacitě.</p></div>
+            <div class="faq-item"><span class="faq-question">Bude z akce záznam?</span><p class="faq-answer">Akce probíhá prezenčně. Videozáznam neplánujeme, po akci však zašleme materiály.</p></div>
+            <div class="faq-item"><span class="faq-question">Mohu vzít kolegu?</span><p class="faq-answer">Ano. Každou osobu prosíme zaregistrovat samostatně z důvodu kapacity.</p></div>
             <div class="faq-item"><span class="faq-question">Kolik stojí vstupenka?</span><p class="faq-answer">Pro všechny registrované účastníky je vstup <strong>zdarma</strong>.</p></div>
         </div>
     </section>
