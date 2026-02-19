@@ -74,7 +74,7 @@ $message = "
 <body style='font-family: sans-serif; color: #333; line-height: 1.6;'>
   <div style='max-width: 600px; margin: 0 auto;'>
       <h2 style='color: #222;'>Dobrý den, $name,</h2>
-      <p>Děkujeme za registraci na <strong>Previo MeetUp</strong>. Vaše místo je závazně rezervováno.</p>
+    <p>Děkujeme Vám za registraci na <strong>Previo MeetUp</strong>. Vaše místo je závazně rezervováno.</p>
       
       <div style='background-color: #f9f9f9; border-left: 5px solid #B50000; padding: 20px; margin: 20px 0;'>
         <h3 style='margin-top: 0; color: #B50000;'>📅 $city</h3>
@@ -85,11 +85,11 @@ $message = "
 
       <p>Vybraný program: <strong>$programName</strong></p>
       
-      <p>Pokud máte dietní omezení ($diet), budeme na to myslet.</p>
+    <p>Dietní omezení ($diet) evidujeme a při organizaci akce je zohledníme.</p>
       
-      <p>V případě, že se nebudete moci zúčastnit, dejte nám prosím vědět odpovědí na tento e-mail.</p>
+    <p>Pokud se nebudete moci zúčastnit, prosíme o informaci odpovědí na tento e-mail.</p>
 
-      <p style='margin-top: 30px;'>Těšíme se na vás!<br><strong>Tým Previo</strong></p>
+    <p style='margin-top: 30px;'>Těšíme se na setkání s Vámi.<br><strong>Tým Previo</strong></p>
       <div style='font-size: 0.8em; color: #888; border-top: 1px solid #eee; padding-top: 10px; margin-top: 30px;'>
         Previo.cz | +420 251 613 924 | info@previo.cz
       </div>
