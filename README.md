@@ -1,85 +1,157 @@
-# Previo MeetUp - Registrační systém pro roadshow
+# Previo MeetUp – registrační landing page (PHP)
 
-Webová aplikace pro správu a registraci účastníků na sérii offline setkání **Previo MeetUp** - roadshow po městech ČR zaměřená na hoteliéry a provozovatele ubytování.
+Jednoduchá webová aplikace pro meetup/roadshow registrace.
+Obsahuje veřejnou stránku s formulářem, admin rozhraní pro editaci obsahu akce a backend pro zápis registrací + odesílání e-mailů.
 
-## Co aplikace umí
+Je připravená pro rychlé nasazení jako samostatný mini-projekt vedle WordPressu (typicky subdoména nebo podsložka).
 
-### Landing page (`index.php`)
-- **Hero sekce** s rotujícím sliderem pozadí a CTA tlačítkem
-- **Statistiky** komunity (120+ zastávek, 1 500+ káv, 98 % spokojenost)
-- **Informační bloky** - co se účastníci dozvědí (revenue management, e-Turista, AI)
-- **Program** se dvěma záložkami:
-  - Dopoledne: **Connect** (pro nehoteliéry / neklienty Previa)
-  - Odpoledne: **PRO/LITE** (pro stávající klienty)
-- **Profily řečníků** (Jiří Šindelář, Petr Mareš, Jana V.)
-- **Registrační formulář** s AJAXovým odesláním
-- **FAQ sekce** s nejčastějšími dotazy
-- **Newsletter** přihlášení
-- **Pill bar** - fixní lišta s progress barem obsazenosti a CTA
-- **Modální okno** po úspěšné registraci s možností uložit do kalendáře (Google / Outlook)
-- Plně **responzivní design** (dark mode hero, světlý obsah)
-- **Scroll reveal animace**
+## Co projekt dělá
 
-### Administrace (`admin.php`)
-- Přihlášení heslem
-- Editace údajů o akci (město, datum, čas, místo konání)
-- Správa kapacity (celková / obsazeno)
-- Editace promo textů (hero nadpis, podnadpis)
-- Editace programu obou bloků (formát: `Čas | Nadpis | Popis`)
-- Data se ukládají do `data.json`
+### 1) Veřejná stránka (`index.php`)
+- načítá data akce z `data.json` (město, datum, čas, venue, kapacita, program)
+- zobrazuje kompletní landing page s programem, FAQ a CTA
+- má registrační formulář odesílaný přes `fetch()` na backend
+- po úspěchu zobrazí potvrzovací modal a nabídku kalendáře (Google + ICS)
 
-### Registrace (`process_registration.php`)
-- Zpracování formuláře (jméno, hotel, e-mail, telefon, typ účasti, dieta, dotaz)
-- Odeslání dat do **Google Sheets** přes Google Apps Script
-- **HTML potvrzovací e-mail** účastníkovi s detaily akce
-- **Notifikační e-mail** adminovi (plain text)
-- Logování chyb do `error_log.txt`
+### 2) Administrace (`admin.php`)
+- jednoduché přihlášení heslem (session)
+- editace textů, kapacity, programu i detailů akce
+- ukládání změn zpět do `data.json`
 
-### Kalendářová pozvánka (`download_ics.php`)
-- Generování `.ics` souboru pro import do Outlook / Apple Calendar
+### 3) Zpracování registrací (`process_registration.php`)
+- validace základních polí (`name`, `email`)
+- odeslání registrace do Google Sheets (přes Google Apps Script URL)
+- odeslání potvrzovacího e-mailu účastníkovi
+- odeslání notifikačního e-mailu adminovi
+- JSON odpověď pro frontend
 
-## Technologie
+### 4) Kalendářová pozvánka (`download_ics.php`)
+- vygeneruje `.ics` soubor pro Outlook / Apple Calendar
 
-- **PHP** (backend, šablonování, e-maily)
-- **Vanilla JavaScript** (slider, animace, AJAX formulář, záložky)
-- **CSS** (custom properties, grid, flexbox, animace)
-- **Google Fonts** (Inter, Poppins)
-- **Google Apps Script** (integrace s Google Sheets)
+### 5) Diagnostika (`test_data.php`)
+- ověří dostupnost a validitu `data.json`
 
 ## Struktura projektu
 
 ```
 kaficko/
-├── index.php                 # Hlavní landing page
-├── admin.php                 # Administrační panel
-├── process_registration.php  # Zpracování registrace
-├── download_ics.php          # Generování ICS pozvánky
-├── data.json                 # Konfigurace akce (město, datum, program)
-├── img/                      # Obrázky (řečníci, lokace, logo)
-└── docs/                     # Statická verze pro GitHub Pages
-    └── index.html            # Preview bez PHP
+├── index.php
+├── admin.php
+├── process_registration.php
+├── download_ics.php
+├── test_data.php
+├── data.json
+├── docs/
+│   └── index.html
+└── img/
 ```
 
-## Spuštění (lokální vývoj)
+## Požadavky
 
-Aplikace vyžaduje PHP server (MAMP, XAMPP, nebo `php -S localhost:8000`).
+- PHP 8.0+ (doporučeno)
+- povolené PHP funkce: `mail()`, `curl` extension
+- webserver s možností zápisu do `data.json`
+
+## Rychlé spuštění lokálně
 
 ```bash
-cd kaficko
 php -S localhost:8000
 ```
 
-Poté otevřete `http://localhost:8000` v prohlížeči.
+Pak otevři:
+- `http://localhost:8000` (web)
+- `http://localhost:8000/admin.php` (administrace)
+- `http://localhost:8000/test_data.php` (diagnostika)
 
-## GitHub Pages
+## Základní konfigurace před produkcí
 
-Statická verze pro vizuální náhled je dostupná ve složce `docs/`. Slouží pouze k prezentaci designu - registrační formulář a admin panel nejsou funkční.
+### 1) Uprav přístup do administrace
+V souboru `admin.php` změň výchozí heslo `previo` na vlastní silné heslo.
 
-## Konfigurace
+### 2) Uprav napojení na Google Sheets
+V souboru `process_registration.php` nastav:
+- `$googleScriptUrl` na vlastní Apps Script endpoint (`.../exec`)
 
-### data.json
-Obsahuje veškerá editovatelná data akce - město, datum, místo, kapacitu, promo texty a program obou bloků. Edituje se přes admin panel nebo přímo.
+### 3) Uprav e-mailové adresy
+V souboru `process_registration.php` nastav:
+- `$senderEmail`
+- `$adminEmail`
+- případně `Reply-To`
 
-### process_registration.php
-- Nastavte URL Google Apps Scriptu pro zápis do Google Sheets
-- Nastavte e-mailové adresy odesílatele a admina
+### 4) Ověř práva souboru
+Soubor `data.json` musí být zapisovatelný uživatelem webserveru.
+
+## WordPress nasazení (doporučený postup)
+
+Nejjednodušší a nejstabilnější je provozovat tuto aplikaci **vedle WordPressu**, ne uvnitř šablony/pluginu.
+
+### Varianta A (doporučeno): samostatná subdoména
+Příklad:
+- WP běží na `www.moje-domena.cz`
+- registrace běží na `events.moje-domena.cz`
+
+Postup:
+1. Nahraj celý projekt na subdoménu.
+2. Ověř, že funguje `index.php`, `admin.php`, `process_registration.php`.
+3. Ve WordPressu vlož tlačítko/menu odkaz na registrační stránku.
+
+Výhody:
+- nulový konflikt s WP pluginy, cache a šablonou
+- jednoduchý update (jen přepíšeš soubory)
+
+### Varianta B: podsložka na stejné doméně
+Příklad: `www.moje-domena.cz/meetup/`
+
+Postup:
+1. Nahraj projekt do podsložky `meetup`.
+2. Ve WordPressu nepřepisuj tuto cestu přes permalink pravidla.
+3. Přidej odkaz na `/meetup/` do stránky nebo menu.
+
+> Pokud máš agresivní cache/plugin firewall, přidej výjimku pro `process_registration.php`.
+
+## Jak založit repozitář na GitHubu
+
+Pokud projekt teprve zakládáš jako nový repozitář:
+
+```bash
+git init
+git add .
+git commit -m "Initial commit: meetup registration app"
+git branch -M main
+git remote add origin https://github.com/TVUJ-UCET/NAZEV-REPO.git
+git push -u origin main
+```
+
+Pak v GitHub repozitáři:
+- ověř, že `README.md` se zobrazuje jako hlavní dokumentace
+- případně zapni GitHub Pages jen pro `docs/index.html` (statický preview)
+
+## Detailní návod pro WP admina
+
+Podrobný deployment checklist je v dokumentu:
+
+- `docs/WORDPRESS_DEPLOY.md`
+- `docs/GO-LIVE_CHECKLIST.md`
+- `docs/HANDOVER_TEMPLATE.md`
+
+## GitHub Pages preview
+
+Soubor `docs/index.html` je statická ukázka designu.
+Na GitHub Pages **nefunguje** PHP backend (registrace, admin, e-maily).
+
+## Známá omezení
+
+- přihlášení do administrace je jednoduché (session + heslo v kódu)
+- `download_ics.php` má aktuálně pevně zadané datum/čas/místo
+- chybí ochrana proti CSRF/rate limit (pro veřejnou produkci doporučeno doplnit)
+
+## Doporučení pro produkci
+
+- zapnout HTTPS
+- změnit admin heslo před spuštěním
+- sledovat doručitelnost e-mailů (SPF, DKIM, DMARC)
+- otestovat celý flow: formulář → Sheets → e-mail klientovi → e-mail adminovi
+
+---
+
+Pokud chceš, můžu v dalším kroku rovnou připravit i jednoduchou „hardened“ verzi (bezpečnější přihlášení, CSRF token a konfiguraci přes `.env`).
