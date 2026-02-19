@@ -133,6 +133,7 @@ Podrobný deployment checklist je v dokumentu:
 - `docs/WORDPRESS_DEPLOY.md`
 - `docs/GO-LIVE_CHECKLIST.md`
 - `docs/HANDOVER_TEMPLATE.md`
+- `docs/GITHUB_RELEASE_TEXT.md`
 
 ## GitHub Pages preview
 
