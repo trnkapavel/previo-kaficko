@@ -134,6 +134,7 @@ Podrobný deployment checklist je v dokumentu:
 - `docs/GO-LIVE_CHECKLIST.md`
 - `docs/HANDOVER_TEMPLATE.md`
 - `docs/GITHUB_RELEASE_TEXT.md`
+- `docs/GOOGLE_CHAT_INTEGRATION.md`
 
 ## GitHub Pages preview
 

@@ -1,0 +1,58 @@
+name: Google Chat Notifications
+
+on:
+  push:
+    branches: [main]
+  release:
+    types: [published]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL != '' }}
+    steps:
+      - name: Send push notification
+        if: github.event_name == 'push'
+        env:
+          WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+          MESSAGE: |
+            ✅ GitHub update: ${{ github.repository }}
+            Branch: ${{ github.ref_name }}
+            Autor: ${{ github.actor }}
+            Commit: ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          url = os.environ['WEBHOOK_URL']
+          text = os.environ['MESSAGE']
+          data = json.dumps({'text': text}).encode('utf-8')
+          req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
+          with urllib.request.urlopen(req):
+              pass
+          PY
+
+      - name: Send release notification
+        if: github.event_name == 'release'
+        env:
+          WEBHOOK_URL: ${{ secrets.GOOGLE_CHAT_WEBHOOK_URL }}
+          MESSAGE: |
+            🚀 New release: ${{ github.repository }}
+            Tag: ${{ github.event.release.tag_name }}
+            Název: ${{ github.event.release.name }}
+            Release: ${{ github.event.release.html_url }}
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          url = os.environ['WEBHOOK_URL']
+          text = os.environ['MESSAGE']
+          data = json.dumps({'text': text}).encode('utf-8')
+          req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
+          with urllib.request.urlopen(req):
+              pass
+          PY

@@ -5,6 +5,29 @@ ini_set('display_errors', 1);
 
 header('Content-Type: application/json');
 
+function sendGoogleChatMessage($webhookUrl, $text) {
+  if (empty($webhookUrl) || empty($text)) {
+    return false;
+  }
+
+  $payload = json_encode(['text' => $text], JSON_UNESCAPED_UNICODE);
+  if ($payload === false) {
+    return false;
+  }
+
+  $ch = curl_init($webhookUrl);
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+  curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+  curl_exec($ch);
+  $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+  curl_close($ch);
+
+  return $httpCode >= 200 && $httpCode < 300;
+}
+
 // 1. NAČTENÍ DAT O AKCI (Abychom věděli, kam se člověk hlásí)
 $eventData = [];
 if (file_exists('data.json')) {
@@ -25,6 +48,9 @@ $phone = $_POST['phone'] ?? '';
 $type = $_POST['type'] ?? '';
 $diet = $_POST['diet'] ?? '-';
 $question = $_POST['question'] ?? '-';
+
+// Volitelný webhook pro Google Chat notifikace
+$googleChatWebhookUrl = getenv('GOOGLE_CHAT_WEBHOOK_URL') ?: '';
 
 if (empty($email) || empty($name)) {
     echo json_encode(['success' => false, 'message' => 'Vyplňte povinné údaje.']);
@@ -126,6 +152,20 @@ $adminHeaders .= "Content-type:text/plain;charset=UTF-8" . "\r\n";
 
 // Odeslání adminovi
 mail($adminEmail, $adminSubject, $adminMessage, $adminHeaders);
+
+// 6. VOLITELNÁ NOTIFIKACE DO GOOGLE CHATU
+if (!empty($googleChatWebhookUrl)) {
+  $chatText = "✅ Nová registrace na Previo MeetUp\n";
+  $chatText .= "Město: {$city}\n";
+  $chatText .= "Jméno: {$name}\n";
+  $chatText .= "Hotel: {$hotel}\n";
+  $chatText .= "Typ účasti: {$programName}";
+
+  $chatSent = sendGoogleChatMessage($googleChatWebhookUrl, $chatText);
+  if (!$chatSent) {
+    file_put_contents('error_log.txt', date('Y-m-d H:i:s') . " - Chyba odeslání Google Chat notifikace\n", FILE_APPEND);
+  }
+}
 
 // Návrat odpovědi pro JavaScript
 if ($mailSent) {
