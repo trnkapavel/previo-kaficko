@@ -356,7 +356,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
         </div>
 
         <div class="nav-right">
-            <a href="#registrace" class="btn-main nav-cta">Vyzkoušet zdarma</a>
+            <a href="#registrace" class="btn-main nav-cta">Registrovat se</a>
             <a href="#" class="nav-login">Přihlásit</a>
         </div>
 
@@ -394,7 +394,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
 
             <a href="#registrace">Kontakty</a>
             <a href="#">Blog</a>
-            <a href="#registrace" class="btn-main nav-cta">Vyzkoušet zdarma</a>
+            <a href="#registrace" class="btn-main nav-cta">Registrovat se</a>
             <a href="#" class="nav-login">Přihlásit</a>
         </div>
     </nav>
@@ -426,11 +426,11 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
     </div>
 
     <section id="proc" class="container">
-        <span class="section-tag reveal">Co se dozvíte?</span>
-        <h2 class="section-title reveal">Nestačí jen přežít. Dominujte.</h2>
+        <span class="section-tag reveal">Obsah akce</span>
+        <h2 class="section-title reveal">Praktická témata pro růst ubytování</h2>
 
         <div class="intro-grid reveal stagger-1">
-            <div class="intro-item"><h3>🚀 Pro koho to je?</h3><p>Pro majitele, provozní a recepční hotelů i penzionů. Ať už Previo používáte (odpolední blok), nebo teprve hledáte inspiraci (dopolední blok).</p></div>
+            <div class="intro-item"><h3>🚀 Pro koho je akce určena?</h3><p>Pro majitele, provozní a recepční hotelů i penzionů. Ať už Previo používáte (odpolední blok), nebo teprve hledáte inspiraci (dopolední blok).</p></div>
             <div class="intro-item"><h3>💡 Hlavní témata</h3><p>E-Turista bez stresu, Revenue Management v praxi, psychologie hosta na mobilu a reálné využití AI v hotelnictví.</p></div>
         </div>
 
@@ -447,7 +447,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             <div class="benefit-large-block benefit-card benefit-soft reveal">
                 <div class="benefit-text">
                     <h3>Legislativa bez vrásek (e-Turista)</h3>
-                    <p>Legislativní změny jsou strašákem. My vám e-Turistu představíme jako příležitost k digitalizaci.</p>
+                    <p>Legislativní změny mohou být náročné. Ukážeme vám e-Turistu jako příležitost k digitalizaci.</p>
                     <ul><li>Aktuální briefing: Co musíte splnit.</li><li>Automatizace hlášení: Jak to systém vyřeší za vás.</li></ul>
                 </div>
                 <div class="benefit-image legislation" aria-hidden="true"></div>
@@ -456,7 +456,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             <div class="benefit-large-block benefit-card reveal">
                 <div class="benefit-text">
                     <h3>Budoucnost s AI a automatizací</h3>
-                    <p>Nechte rutinu na stroji. Cesta hosta začíná na mobilu – ukažme si, jak využít AI nástroje (ChatGPT, Ideogram).</p>
+                    <p>Automatizujte rutinní agendu. Cesta hosta začíná na mobilu – ukážeme si, jak efektivně využít AI nástroje (ChatGPT, Ideogram).</p>
                     <ul><li>Psaní textů a reakcí na recenze pomocí AI.</li><li>Cesta moderního hosta: Od vyhledávání po check-out.</li></ul>
                 </div>
                 <div class="benefit-image ai" aria-hidden="true"></div>
@@ -467,7 +467,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             <div class="hw-text">
                 <span style="color: var(--primary); font-weight: 800; text-transform: uppercase;">Vyzkoušejte naživo</span>
                 <h3 style="font-size: 2.5rem; font-family: 'Source Sans 3'; margin: 15px 0;">Automatizace v praxi</h3>
-                <p style="margin-bottom: 30px;">Nebudeme jen mluvit. Vyzkoušejte si, jak fungují <strong>chytré kliky a samoobslužné kiosky</strong>.</p>
+                <p style="margin-bottom: 30px;">Součástí programu jsou praktické ukázky fungování <strong>chytrých klik a samoobslužných kiosků</strong>.</p>
                 <ul style="list-style: none;"><li>✓ Integrace zámkových systémů</li><li>✓ Check-in proces bez recepčního</li></ul>
             </div>
             <div class="hw-image"></div>
@@ -514,8 +514,8 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
         <div class="teaser-grid reveal">
             <div class="teaser-text">
                 <span class="section-tag" style="text-align: left;">Aktuální zastávka</span>
-                <h2 style="font-size: 3rem; font-family: 'Source Sans 3'; margin-bottom: 30px;">Potkáme se v: <br><span style="color: var(--primary);"><?= htmlspecialchars($data['city']) ?></span></h2>
-                <p style="font-size: 1.2rem; opacity: 0.8; margin-bottom: 40px;">Těšíme se na vás v hotelu <?= htmlspecialchars($data['venue']) ?>.</p>
+                <h2 style="font-size: 3rem; font-family: 'Source Sans 3'; margin-bottom: 30px;">Místo konání: <br><span style="color: var(--primary);"><?= htmlspecialchars($data['city']) ?></span></h2>
+                <p style="font-size: 1.2rem; opacity: 0.8; margin-bottom: 40px;">Akce se koná v hotelu <?= htmlspecialchars($data['venue']) ?>.</p>
                 <div style="background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display: inline-block;">
                     <h4 style="margin-bottom: 10px; opacity: 0.7;">Zapište si termín:</h4>
                     <p style="font-size: 2.2rem; font-family: 'Source Sans 3'; font-weight: 700; margin: 0;"><?= htmlspecialchars($data['date']) ?></p>
@@ -533,8 +533,8 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
     </section>
 
     <section id="lektori" class="container">
-        <span class="section-tag reveal">Kdo vás akcí provede?</span>
-        <h2 class="section-title reveal">Experti, kteří mluví vaší řečí</h2>
+        <span class="section-tag reveal">Řečníci</span>
+        <h2 class="section-title reveal">Experti s praxí v oboru</h2>
         <div class="speaker-profile reveal">
             <div class="speaker-photo" style="background-image: url('img/jiri-sindelar.jpeg');"></div>
             <div class="speaker-info">
@@ -568,9 +568,9 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             
             <div class="process-steps reveal stagger-1">
                 <div class="process-line"></div>
-                <div class="step"><div class="step-icon">1</div><h4 style="font-size: 1.2rem;">Vyplnění přihlášky</h4><p style="opacity: 0.7;">Zabere to minutu.</p></div>
-                <div class="step"><div class="step-icon">2</div><h4 style="font-size: 1.2rem;">Potvrzovací e-mail</h4><p style="opacity: 0.7;">Info dorazí do schránky.</p></div>
-                <div class="step"><div class="step-icon">3</div><h4 style="font-size: 1.2rem;">Uložení do kalendáře</h4><p style="opacity: 0.7;">Ať akci nepropásnete.</p></div>
+                <div class="step"><div class="step-icon">1</div><h4 style="font-size: 1.2rem;">Vyplnění přihlášky</h4><p style="opacity: 0.7;">Vyplnění trvá přibližně jednu minutu.</p></div>
+                <div class="step"><div class="step-icon">2</div><h4 style="font-size: 1.2rem;">Potvrzovací e-mail</h4><p style="opacity: 0.7;">Potvrzení obdržíte e-mailem.</p></div>
+                <div class="step"><div class="step-icon">3</div><h4 style="font-size: 1.2rem;">Uložení do kalendáře</h4><p style="opacity: 0.7;">Pro snadné připomenutí termínu.</p></div>
             </div>
 
             <div class="reg-form-container reveal stagger-2">
@@ -614,10 +614,10 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
 
     <div class="newsletter-section">
         <div class="container reveal">
-             <h2 style="font-family: 'Source Sans 3'; font-size: 2.5rem; margin-bottom: 20px;">Nechcete, aby vám něco uniklo?</h2>
+             <h2 style="font-family: 'Source Sans 3'; font-size: 2.5rem; margin-bottom: 20px;">Chcete dostávat novinky z oboru?</h2>
              <form class="newsletter-form">
                  <input type="email" placeholder="Váš e-mail" class="newsletter-input" required>
-                 <button type="submit" class="btn-dark">Odebírat novinky</button>
+                 <button type="submit" class="btn-dark">Přihlásit odběr</button>
              </form>
         </div>
     </div>
@@ -721,7 +721,7 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
             <span class="close-modal" onclick="closeModal()">&times;</span>
             <div class="check-icon">✓</div>
             <h2 style="color: #333;">Registrace přijata!</h2>
-            <p style="margin: 20px 0; color: #666;">Potvrzení a detaily jsme vám právě poslali na e-mail.</p>
+            <p style="margin: 20px 0; color: #666;">Potvrzení a detaily jsme vám odeslali na e-mail.</p>
             <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; margin: 25px 0;">
                 <p style="font-weight: 700; margin-bottom: 15px; color: var(--primary);">Uložte si termín do kalendáře:</p>
                 <div>
