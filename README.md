@@ -154,5 +154,3 @@ Na GitHub Pages **nefunguje** PHP backend (registrace, admin, e-maily).
 - otestovat celý flow: formulář → Sheets → e-mail klientovi → e-mail adminovi
 
 ---
-
-Pokud chceš, můžu v dalším kroku rovnou připravit i jednoduchou „hardened“ verzi (bezpečnější přihlášení, CSRF token a konfiguraci přes `.env`).
