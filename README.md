@@ -131,6 +131,8 @@ Pak v GitHub repozitáři:
 Podrobný deployment checklist je v dokumentu:
 
 - `docs/WORDPRESS_DEPLOY.md`
+- `docs/REACT_WORDPRESS_DEPLOY.md` (nasazení React/Vite SPA do WordPressu)
+- `docs/WORDPRESS_PLUGIN.md` (zabalení React SPA jako WordPress plugin)
 - `docs/GO-LIVE_CHECKLIST.md`
 - `docs/HANDOVER_TEMPLATE.md`
 - `docs/GITHUB_RELEASE_TEXT.md`

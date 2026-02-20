@@ -1,0 +1,52 @@
+name: Build WordPress Plugin
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Prepare plugin folder
+        run: |
+          mkdir -p previo-pms-plugin/assets
+          cp dist/assets/index.js previo-pms-plugin/assets/
+          cp dist/assets/index.css previo-pms-plugin/assets/
+          cp previo-pms.php previo-pms-plugin/
+
+      - name: Create ZIP
+        run: zip -r previo-pms-plugin.zip previo-pms-plugin/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: previo-pms-plugin
+          path: previo-pms-plugin.zip
+          retention-days: 30
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: previo-pms-plugin.zip
+          generate_release_notes: true
