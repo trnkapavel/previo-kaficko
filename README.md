@@ -36,6 +36,7 @@ Je připravená pro rychlé nasazení jako samostatný mini-projekt vedle WordPr
 ```
 kaficko/
 ├── index.php
+├── style.css
 ├── admin.php
 ├── process_registration.php
 ├── download_ics.php
@@ -45,6 +46,8 @@ kaficko/
 │   └── index.html
 └── img/
 ```
+
+> Styly jsou odděleny do souboru `style.css`. `index.php` na něj odkazuje přes `<link rel="stylesheet" href="style.css">`.
 
 ## Požadavky
 
