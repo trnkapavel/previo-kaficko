@@ -135,12 +135,21 @@ section { padding: var(--space-section) 5%; }
 .program-desc h4 { font-size: 1.4rem; margin-bottom: 10px; }
 .program-desc p { color: #555; }
 
-.teaser-section { background: #f8fafc; color: var(--text-main); padding: 120px 5%; overflow: hidden; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
-.teaser-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; align-items: center; max-width: 1200px; margin: 0 auto; }
-.teaser-map { height: 500px; background: #f1f5f9; border-radius: var(--radius-lg); position: relative; border: 1px solid var(--color-border); overflow: hidden; display: flex; align-items: center; justify-content: center; }
-.map-overlay { position: absolute; width: 100%; height: 100%; background: url('img/mapa.jpg') center/cover; filter: grayscale(0.1) brightness(0.92); opacity: 0.9; transition: 1s; }
-.teaser-map:hover .map-overlay { transform: scale(1.1); opacity: 0.8; }
-.pulse-point { width: 30px; height: 30px; background: var(--primary); border-radius: 50%; position: relative; z-index: 2; animation: pulse 2s infinite; }
+/* Sekce Aktuální zastávka – kompaktní pruhy, bez mapy */
+.stops-section { background: #f8fafc; color: var(--text-main); padding: 60px 5%; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+.stops-list { display: flex; flex-direction: column; gap: 24px; max-width: 1200px; margin: 0 auto; }
+.stop-strip { display: grid; grid-template-columns: 140px 1fr auto; gap: 32px; align-items: center; background: #fff; border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 28px 32px; min-height: 120px; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: box-shadow 0.25s ease; }
+.stop-strip:hover { box-shadow: 0 8px 28px rgba(0,0,0,0.08); }
+.stop-date-block { display: flex; flex-direction: column; gap: 4px; }
+.stop-date { font-size: 1.5rem; font-weight: 700; color: var(--primary); line-height: 1.2; font-family: 'Source Sans 3', sans-serif; }
+.stop-time-range { font-size: 0.9rem; color: #6b7280; font-weight: 500; margin: 0; }
+.stop-content { min-width: 0; }
+.stop-title { font-size: 1.35rem; font-weight: 700; color: var(--text-main); margin: 0 0 10px 0; line-height: 1.3; }
+.stop-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.stop-badge { display: inline-block; padding: 6px 12px; background: var(--gray-light); color: var(--text-main); font-size: 0.85rem; font-weight: 600; border-radius: 4px; border: 1px solid var(--color-border); }
+.stop-desc { font-size: 1rem; color: #555; margin: 0; line-height: 1.55; }
+.stop-cta { flex-shrink: 0; }
+.stop-reg-btn { white-space: nowrap; padding: 14px 28px; font-size: 1rem; background: var(--primary); box-shadow: 0 8px 20px rgba(181, 0, 0, 0.22); }
 
 .speaker-profile { display: grid; grid-template-columns: 350px 1fr; gap: 50px; margin-bottom: 60px; background: white; border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; transition: 0.3s ease; }
 .speaker-profile:hover { box-shadow: 0 40px 80px rgba(0,0,0,0.08); transform: translateY(-10px); border-color: var(--primary); }
@@ -239,8 +248,11 @@ footer { padding: 72px 5% 26px; border-top: 1px solid var(--color-border); backg
     .benefit-image { height: 320px; width: 100%; visibility: visible !important; display: block !important; }
     .hw-block { flex-direction: column; }
     .hw-image { min-height: 300px; }
-    .teaser-grid { grid-template-columns: 1fr; text-align: center; }
-    .teaser-map { height: 400px; order: -1; }
+    .stop-strip { grid-template-columns: 1fr; gap: 16px; text-align: left; padding: 24px; }
+    .stop-date-block { flex-direction: row; align-items: baseline; gap: 12px; }
+    .stop-date { font-size: 1.35rem; }
+    .stop-cta { order: -1; }
+    .stop-reg-btn { width: 100%; justify-content: center; }
     .speaker-profile { grid-template-columns: 1fr; text-align: center; }
     .process-steps { flex-direction: column; gap: 40px; }
     .process-line { display: none; }

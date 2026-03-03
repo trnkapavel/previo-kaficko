@@ -31,6 +31,19 @@ if ($data['capacity'] > 0) {
     if ($percent > 100) $percent = 100;
 }
 $free_spots = max(0, $data['capacity'] - $data['registered']);
+
+// 3. Zastávky pro sekci "Aktuální zastávka" (fallback z jedné akce, pokud chybí stops)
+$stops = $data['stops'] ?? [];
+if (empty($stops) && !empty($data['city'])) {
+    $stops = [[
+        'date' => $data['date'] ?? '',
+        'time_from' => $data['time'] ?? '09:00',
+        'time_to' => '15:00',
+        'title' => $data['promo_title'] ?? ('Místo konání: ' . $data['city']),
+        'badges' => ['#roadshow', '#previo', '#' . strtolower(preg_replace('/\s+/', '', $data['city']))],
+        'description' => 'Akce se koná v ' . ($data['venue'] ?? $data['city']) . '. ' . ($data['promo_text'] ?? '')
+    ]];
+}
 ?>
 
 <!DOCTYPE html>
@@ -240,24 +253,34 @@ $free_spots = max(0, $data['capacity'] - $data['registered']);
         </div>
     </section>
 
-    <section id="lokalita" class="teaser-section">
-        <div class="teaser-grid reveal">
-            <div class="teaser-text">
-                <span class="section-tag" style="text-align: left;">Aktuální zastávka</span>
-                <h2 style="font-size: 3rem; font-family: 'Source Sans 3'; margin-bottom: 30px;">Místo konání: <br><span style="color: var(--primary);"><?= htmlspecialchars($data['city']) ?></span></h2>
-                <p style="font-size: 1.2rem; opacity: 0.8; margin-bottom: 40px;">Akce se koná v hotelu <?= htmlspecialchars($data['venue']) ?>.</p>
-                <div style="background: rgba(255,255,255,0.05); padding: 40px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); display: inline-block;">
-                    <h4 style="margin-bottom: 10px; opacity: 0.7;">Zapište si termín:</h4>
-                    <p style="font-size: 2.2rem; font-family: 'Source Sans 3'; font-weight: 700; margin: 0;"><?= htmlspecialchars($data['date']) ?></p>
+    <section id="lokalita" class="stops-section">
+        <div class="container">
+            <span class="section-tag reveal" style="text-align: center;">Příští zastávka</span>
+            <div class="stops-list">
+                <?php foreach ($stops as $i => $stop): ?>
+                <div class="stop-strip reveal <?= $i > 0 ? 'stagger-1' : '' ?>">
+                    <div class="stop-date-block">
+                        <time class="stop-date" datetime="<?= htmlspecialchars($stop['date'] ?? '') ?>"><?= htmlspecialchars($stop['date'] ?? '') ?></time>
+                        <p class="stop-time-range"><?= htmlspecialchars($stop['time_from'] ?? '') ?> – <?= htmlspecialchars($stop['time_to'] ?? '') ?></p>
+                    </div>
+                    <div class="stop-content">
+                        <h2 class="stop-title"><?= htmlspecialchars($stop['title'] ?? '') ?></h2>
+                        <?php if (!empty($stop['badges'])): ?>
+                        <div class="stop-badges">
+                            <?php foreach ((array)$stop['badges'] as $badge): ?>
+                            <span class="stop-badge"><?= htmlspecialchars($badge) ?></span>
+                            <?php endforeach; ?>
+                        </div>
+                        <?php endif; ?>
+                        <?php if (!empty($stop['description'])): ?>
+                        <p class="stop-desc"><?= nl2br(htmlspecialchars($stop['description'])) ?></p>
+                        <?php endif; ?>
+                    </div>
+                    <div class="stop-cta">
+                        <a href="#registrace" class="btn-main stop-reg-btn">Registrace</a>
+                    </div>
                 </div>
-            </div>
-            <div class="teaser-map reveal stagger-1">
-                <div class="map-overlay"></div>
-                <div style="position: relative; z-index: 2; text-align: center; color: white;">
-                    <div class="pulse-point" style="margin: 0 auto 20px;"></div>
-                    <h3 style="font-size: 2rem;"><?= htmlspecialchars($data['city']) ?></h3>
-                    <p style="font-size: 1rem; opacity: 0.7;">Termín: <?= htmlspecialchars($data['date']) ?></p>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>

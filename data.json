@@ -6,6 +6,24 @@
     "capacity": 70,
     "registered": 10,
     "promo_title": "Jarní roadshow: Název",
+    "stops": [
+        {
+            "date": "24. března 2026",
+            "time_from": "09:30",
+            "time_to": "15:00",
+            "title": "V březnu budeme v Ostravě a na Moravě",
+            "badges": ["#roadshow", "#previo", "#opava"],
+            "description": "Akce se koná v hotelu Pytloun Grand Hotel Imperial. Přijďte na dopolední blok Connect nebo odpolední PRO/LITE."
+        },
+        {
+            "date": "14. dubna 2026",
+            "time_from": "09:00",
+            "time_to": "16:00",
+            "title": "Jarní roadshow: Brno a jižní Morava",
+            "badges": ["#roadshow", "#previo", "#brno"],
+            "description": "Setkáme se v Brně. Ranní blok pro neklienty, odpoledne workshopy a konzultace pro stávající zákazníky."
+        }
+    ],
     "promo_text": "Přicházíme do vašeho regionu. Legislativní novinky, práce s cenou a technologie, které vám uvolní ruce.",
     "program_connect": [
         {
