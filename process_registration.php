@@ -46,7 +46,7 @@ $hotel = $_POST['hotel'] ?? '';
 $email = $_POST['email'] ?? '';
 $phone = $_POST['phone'] ?? '';
 $type = $_POST['type'] ?? '';
-$diet = $_POST['diet'] ?? '-';
+$location = $_POST['location'] ?? ($eventData['city'] ?? '-');
 $question = $_POST['question'] ?? '-';
 
 // Volitelný webhook pro Google Chat notifikace
@@ -68,7 +68,7 @@ $postData = [
     'email' => $email,
     'phone' => $phone,
     'type' => $type,
-    'diet' => $diet,
+    'location' => $location,
     'question' => $question,
     'event_city' => $city // Přidáme i město, ať víte, kam se hlásí
 ];
@@ -110,8 +110,7 @@ $message = "
       </div>
 
       <p>Vybraný program: <strong>$programName</strong></p>
-      
-    <p>Dietní omezení ($diet) evidujeme a při organizaci akce je zohledníme.</p>
+      <p>Lokalita akce: <strong>$location</strong></p>
       
     <p>Pokud se nebudete moci zúčastnit, prosíme o informaci odpovědí na tento e-mail.</p>
 
@@ -143,7 +142,7 @@ $adminMessage .= "Hotel: $hotel\n";
 $adminMessage .= "E-mail: $email\n";
 $adminMessage .= "Telefon: $phone\n";
 $adminMessage .= "Typ účasti: $programName\n";
-$adminMessage .= "Dieta: $diet\n";
+$adminMessage .= "Lokalita: $location\n";
 $adminMessage .= "Dotaz: $question\n";
 
 $adminHeaders = "From: Previo Web <" . $senderEmail . ">" . "\r\n";

@@ -24,15 +24,81 @@ if (!$data) {
     ];
 }
 
-// 2. Výpočet kapacity
+// 2. Odvození kontextu landing page (ranní / odpoledne / registrace)
+if (!isset($landing_config) || !is_array($landing_config)) {
+    $landing_config = [];
+}
+
+$landing_variant = $landing_config['variant'] ?? 'default';
+$hero_cta_slot = $landing_config['hero_cta_slot'] ?? null;
+$page_title_suffix = $landing_config['page_title_suffix'] ?? '';
+
+// 3. Výběr názvu a textu hero sekce z configu nebo z dat
+$hero_title = $landing_config['hero_title'] ?? ($data['promo_title'] ?? 'Previo MeetUp');
+$hero_text = $landing_config['hero_text'] ?? ($data['promo_text'] ?? '');
+
+// 4. Lokality (pro výběr v registraci a ticker)
+$locations = [];
+if (!empty($data['locations']) && is_array($data['locations'])) {
+    $locations = $data['locations'];
+} elseif (!empty($data['city'])) {
+    $locations = [ $data['city'] ];
+}
+
+// 5. Nejbližší akce pro progress bar (bez agregace více lokalit)
+$selectedLocation = isset($_GET['location']) ? trim($_GET['location']) : ($data['city'] ?? null);
+$upcomingEvent = null;
+
+if (!empty($data['events']) && is_array($data['events'])) {
+    $now = new DateTimeImmutable('now');
+    foreach ($data['events'] as $event) {
+        if (empty($event['date_iso']) || empty($event['capacity'])) {
+            continue;
+        }
+
+        // Pokud máme v kontextu lokalitu, filtrujeme jen na ni
+        if (!empty($selectedLocation) && !empty($event['location']) && $event['location'] !== $selectedLocation) {
+            continue;
+        }
+
+        try {
+            $eventDate = new DateTimeImmutable($event['date_iso']);
+        } catch (Exception $e) {
+            continue;
+        }
+
+        if ($eventDate < $now) {
+            continue;
+        }
+
+        if ($upcomingEvent === null || $eventDate < new DateTimeImmutable($upcomingEvent['date_iso'])) {
+            $upcomingEvent = $event;
+        }
+    }
+}
+
+// Fallback na původní strukturu – jediná akce
+if ($upcomingEvent === null) {
+    $upcomingEvent = [
+        'location' => $data['city'] ?? '',
+        'date' => $data['date'] ?? '',
+        'date_iso' => null,
+        'capacity' => $data['capacity'] ?? 0,
+        'registered' => $data['registered'] ?? 0,
+    ];
+}
+
+// 6. Výpočet kapacity pro progress bar
+$capacity = (int)($upcomingEvent['capacity'] ?? 0);
+$registered = (int)($upcomingEvent['registered'] ?? 0);
 $percent = 0;
-if ($data['capacity'] > 0) {
-    $percent = round(($data['registered'] / $data['capacity']) * 100);
+if ($capacity > 0) {
+    $percent = round(($registered / $capacity) * 100);
     if ($percent > 100) $percent = 100;
 }
-$free_spots = max(0, $data['capacity'] - $data['registered']);
+$free_spots = max(0, $capacity - $registered);
 
-// 3. Zastávky pro sekci "Aktuální zastávka" (fallback z jedné akce, pokud chybí stops)
+// 7. Zastávky pro sekci "Aktuální zastávka" (fallback z jedné akce, pokud chybí stops)
 $stops = $data['stops'] ?? [];
 if (empty($stops) && !empty($data['city'])) {
     $stops = [[
@@ -44,6 +110,23 @@ if (empty($stops) && !empty($data['city'])) {
         'description' => 'Akce se koná v ' . ($data['venue'] ?? $data['city']) . '. ' . ($data['promo_text'] ?? '')
     ]];
 }
+
+// Historie akcí pro ticker
+$history_locations = $data['history_locations'] ?? [
+    'Praha',
+    'Brno',
+    'Ostrava',
+    'Plzeň',
+    'Liberec',
+    'Olomouc',
+    'Hradec Králové',
+    'České Budějovice',
+    'Zlín',
+    'Karlovy Vary',
+];
+
+// Slot pro přesměrování na /registrace
+$slot_param = isset($landing_slot) ? $landing_slot : $hero_cta_slot;
 ?>
 
 <!DOCTYPE html>
@@ -51,7 +134,7 @@ if (empty($stops) && !empty($data['city'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Previo MeetUp | <?= htmlspecialchars($data['city']) ?></title>
+    <title>Previo MeetUp | <?= htmlspecialchars($data['city']) ?><?= htmlspecialchars($page_title_suffix) ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
@@ -99,7 +182,7 @@ if (empty($stops) && !empty($data['city'])) {
         </div>
 
         <div class="nav-right">
-            <a href="#registrace" class="btn-main nav-cta">Registrovat se</a>
+            <a href="/registrace<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main nav-cta">Registrovat se</a>
             <a href="#" class="nav-login">Přihlásit</a>
         </div>
 
@@ -137,7 +220,7 @@ if (empty($stops) && !empty($data['city'])) {
 
             <a href="#registrace">Kontakty</a>
             <a href="#">Blog</a>
-            <a href="#registrace" class="btn-main nav-cta">Registrovat se</a>
+            <a href="/registrace<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main nav-cta">Registrovat se</a>
             <a href="#" class="nav-login">Přihlásit</a>
         </div>
     </nav>
@@ -150,10 +233,10 @@ if (empty($stops) && !empty($data['city'])) {
         </div>
 
         <div class="hero-content reveal">
-            <h1><?= htmlspecialchars($data['promo_title']) ?></h1>
-            <p><?= htmlspecialchars($data['promo_text']) ?></p>
+            <h1><?= htmlspecialchars($hero_title) ?></h1>
+            <p><?= htmlspecialchars($hero_text) ?></p>
             <div class="hero-actions">
-                <a href="#registrace" class="btn-main" style="background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Rezervovat místo</a>
+                <a href="/registrace<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main" style="background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Rezervovat místo</a>
                 <a href="#program" class="btn-secondary">Zobrazit program</a>
             </div>
         </div>
@@ -177,43 +260,47 @@ if (empty($stops) && !empty($data['city'])) {
             <div class="intro-item"><h3>💡 Hlavní témata</h3><p>E-Turista bez stresu, Revenue Management v praxi, psychologie hosta na mobilu a reálné využití AI v hotelnictví.</p></div>
         </div>
 
-        <div class="benefit-stack">
-            <div class="benefit-large-block benefit-card reveal">
-                <div class="benefit-text">
-                    <h3>Růst tržeb & Práce s cenou</h3>
-                    <p>Ukážeme vám, jak reagovat na lokální festivaly a události. Naučíme vás pracovat s minimální délkou pobytu a dynamickou cenotvorbou.</p>
-                    <ul><li>Lokální statistiky a průměrné ceny v regionu.</li><li>Strategie pro zvýšení přímých rezervací.</li></ul>
-                </div>
-                <div class="benefit-image revenue" aria-hidden="true"></div>
-            </div>
-
-            <div class="benefit-large-block benefit-card benefit-soft reveal">
-                <div class="benefit-text">
-                    <h3>Legislativa bez vrásek (e-Turista)</h3>
-                    <p>Legislativní změny mohou být náročné. Ukážeme vám e-Turistu jako příležitost k digitalizaci.</p>
-                    <ul><li>Aktuální briefing: Co musíte splnit.</li><li>Automatizace hlášení: Jak to systém vyřeší za vás.</li></ul>
-                </div>
-                <div class="benefit-image legislation" aria-hidden="true"></div>
-            </div>
- 
-            <div class="benefit-large-block benefit-card reveal">
-                <div class="benefit-text">
-                    <h3>Budoucnost s AI a automatizací</h3>
-                    <p>Automatizujte rutinní agendu. Cesta hosta začíná na mobilu – ukážeme si, jak efektivně využít AI nástroje (ChatGPT, Ideogram).</p>
-                    <ul><li>Psaní textů a reakcí na recenze pomocí AI.</li><li>Cesta moderního hosta: Od vyhledávání po check-out.</li></ul>
-                </div>
-                <div class="benefit-image ai" aria-hidden="true"></div>
-            </div>
+        <div class="content-grid reveal">
+            <article class="content-item">
+                <h3>Růst tržeb &amp; práce s cenou</h3>
+                <p>Ukážeme vám, jak reagovat na lokální festivaly a události. Naučíme vás pracovat s minimální délkou pobytu a dynamickou cenotvorbou.</p>
+                <ul>
+                    <li>Lokální statistiky a průměrné ceny v regionu.</li>
+                    <li>Strategie pro zvýšení přímých rezervací.</li>
+                </ul>
+            </article>
+            <article class="content-item">
+                <h3>Legislativa bez vrásek (e‑Turista)</h3>
+                <p>Legislativní změny mohou být náročné. Ukážeme vám e‑Turistu jako příležitost k digitalizaci a zjednodušení administrativy.</p>
+                <ul>
+                    <li>Aktuální briefing: co musíte splnit.</li>
+                    <li>Automatizace hlášení: jak to systém vyřeší za vás.</li>
+                </ul>
+            </article>
+            <article class="content-item">
+                <h3>Budoucnost s AI a automatizací</h3>
+                <p>Automatizujte rutinní agendu. Cesta hosta začíná na mobilu – ukážeme si, jak efektivně využít AI nástroje v každodenním provozu.</p>
+                <ul>
+                    <li>Psaní textů a reakcí na recenze pomocí AI.</li>
+                    <li>Cesta moderního hosta: od vyhledávání po check‑out.</li>
+                </ul>
+            </article>
         </div>
 
-        <div class="hw-block reveal">
+        <div class="automation-section reveal">
+            <span class="section-tag">Automatizace v praxi</span>
+            <div class="hw-block">
             <div class="hw-text">
                 <span style="color: var(--primary); font-weight: 800; text-transform: uppercase;">Vyzkoušejte naživo</span>
                 <h3 style="font-size: 2.5rem; font-family: 'Source Sans 3'; margin: 15px 0;">Automatizace v praxi</h3>
                 <p style="margin-bottom: 30px;">Součástí programu jsou praktické ukázky fungování <strong>chytrých klik a samoobslužných kiosků</strong>.</p>
-                <ul style="list-style: none;"><li>✓ Integrace zámkových systémů</li><li>✓ Check-in proces bez recepčního</li></ul>
+                <ul style="list-style: none;">
+                    <li>✓ Integrace zámkových systémů (např. Smartkey klika)</li>
+                    <li>✓ Check‑in proces bez recepčního</li>
+                </ul>
             </div>
             <div class="hw-image"></div>
+            </div>
         </div>
     </section>
 
@@ -277,7 +364,7 @@ if (empty($stops) && !empty($data['city'])) {
                         <?php endif; ?>
                     </div>
                     <div class="stop-cta">
-                        <a href="#registrace" class="btn-main stop-reg-btn">Registrace</a>
+                        <a href="/registrace<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main stop-reg-btn">Registrace</a>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -316,14 +403,26 @@ if (empty($stops) && !empty($data['city'])) {
 
     <section id="registrace" class="reg-section">
         <div class="container reveal">
-            <span class="section-tag" style="color: #6b7280;">Jak to funguje?</span>
-            <h2 class="section-title" style="color: var(--text-main);">Zajistěte si místo v <?= htmlspecialchars($data['city']) ?></h2>
+            <span class="section-tag" style="color: #6b7280;">Registrace</span>
+            <h2 class="section-title" style="color: var(--text-main);">Jak to funguje? Zajistěte si místo</h2>
             
             <div class="process-steps reveal stagger-1">
                 <div class="process-line"></div>
-                <div class="step"><div class="step-icon">1</div><h4 style="font-size: 1.2rem;">Vyplnění přihlášky</h4><p style="opacity: 0.7;">Vyplnění trvá přibližně jednu minutu.</p></div>
-                <div class="step"><div class="step-icon">2</div><h4 style="font-size: 1.2rem;">Potvrzovací e-mail</h4><p style="opacity: 0.7;">Potvrzení obdržíte e-mailem.</p></div>
-                <div class="step"><div class="step-icon">3</div><h4 style="font-size: 1.2rem;">Uložení do kalendáře</h4><p style="opacity: 0.7;">Pro snadné připomenutí termínu.</p></div>
+                <div class="step">
+                    <div class="step-icon" aria-hidden="true">✍️</div>
+                    <h4 style="font-size: 1.2rem;">Vyplnění přihlášky</h4>
+                    <p style="opacity: 0.7;">Vyplnění trvá přibližně jednu minutu.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon" aria-hidden="true">✉️</div>
+                    <h4 style="font-size: 1.2rem;">Potvrzovací e‑mail</h4>
+                    <p style="opacity: 0.7;">Potvrzení obdržíte e‑mailem.</p>
+                </div>
+                <div class="step">
+                    <div class="step-icon" aria-hidden="true">📅</div>
+                    <h4 style="font-size: 1.2rem;">Uložení do kalendáře</h4>
+                    <p style="opacity: 0.7;">Pro snadné připomenutí termínu.</p>
+                </div>
             </div>
 
             <div class="reg-form-container reveal stagger-2">
@@ -338,16 +437,25 @@ if (empty($stops) && !empty($data['city'])) {
                         <input type="text" name="hotel" placeholder="Název ubytování" required>
                         <input type="email" name="email" placeholder="E-mail" required>
                         <input type="tel" name="phone" placeholder="Telefon (pro SMS připomínku)">
-                        <select name="type" required class="full-width">
+
+                        <div class="location-field full-width">
+                            <select name="location" id="locationSelect" required aria-label="Vyberte lokalitu akce">
+                                <option value="">Vyberte lokalitu akce</option>
+                                <?php foreach ($locations as $loc): ?>
+                                    <option value="<?= htmlspecialchars($loc) ?>"><?= htmlspecialchars($loc) ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
+                        <select name="type" id="typeSelect" required class="full-width">
                             <option value="">Vyberte typ účasti</option>
                             <option value="connect">Dopoledne: Connect (Nejsem klient Previa)</option>
                             <option value="prolite">Odpoledne: PRO/LITE (Jsem klient Previa)</option>
                             <option value="both">Celý den</option>
                         </select>
-                        <input type="text" name="diet" placeholder="Dietní omezení (např. bezlepek)" class="full-width">
                         <textarea name="question" rows="3" placeholder="Vaše dotazy nebo témata, která chcete na akci řešit..." class="full-width"></textarea>
                         
-                        <button type="submit" class="btn-main full-width" style="margin-top: 10px; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Odeslat závaznou registraci</button>
+                        <button type="submit" class="btn-main full-width" style="margin-top: 10px; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Dokončit registraci</button>
                     </div>
                 </form>
             </div>
@@ -362,6 +470,44 @@ if (empty($stops) && !empty($data['city'])) {
             <div class="faq-item"><span class="faq-question">Bude z akce záznam?</span><p class="faq-answer">Akce probíhá prezenčně. Videozáznam neplánujeme, po akci však zašleme materiály.</p></div>
             <div class="faq-item"><span class="faq-question">Mohu vzít kolegu?</span><p class="faq-answer">Ano. Každou osobu prosíme zaregistrovat samostatně z důvodu kapacity.</p></div>
             <div class="faq-item"><span class="faq-question">Kolik stojí vstupenka?</span><p class="faq-answer">Pro všechny registrované účastníky je vstup <strong>zdarma</strong>.</p></div>
+        </div>
+    </section>
+
+    <section class="reviews-section">
+        <div class="container reveal">
+            <span class="section-tag">Zkušenosti účastníků</span>
+            <h2 class="section-title">Co si odnáší účastníci</h2>
+            <div class="reviews-grid">
+                <figure class="review-card">
+                    <blockquote>"Odnesl/a jsem si konkrétní kroky, jak upravit ceny a nabídku ubytování. Líbilo se mi, že šlo o reálné příklady z praxe."</blockquote>
+                    <figcaption>Anonymní účastník</figcaption>
+                </figure>
+                <figure class="review-card">
+                    <blockquote>"Nejvíc oceňuji, že jsme řešili i automatizaci a e‑Turistu. Mám mnohem jasnější představu, co potřebujeme nastavit."</blockquote>
+                    <figcaption>Anonymní účastník</figcaption>
+                </figure>
+            </div>
+        </div>
+    </section>
+
+    <section class="history-ticker-section" aria-label="Historie zastávek">
+        <div class="container reveal">
+            <div class="ticker-shell" aria-hidden="true">
+                <div class="ticker-track">
+                    <?php foreach ($history_locations as $loc): ?>
+                        <div class="ticker-item">
+                            <span class="ticker-icon">✓</span>
+                            <span class="ticker-text"><?= htmlspecialchars($loc) ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                    <?php foreach ($history_locations as $loc): ?>
+                        <div class="ticker-item">
+                            <span class="ticker-icon">✓</span>
+                            <span class="ticker-text"><?= htmlspecialchars($loc) ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -465,7 +611,7 @@ if (empty($stops) && !empty($data['city'])) {
         <div class="progress-box">
             <span style="font-size: 0.9rem; font-weight: 600; color: #555;">Zbývá <?= $free_spots ?> míst</span>
             <div class="progress-bg"><div class="progress-fill" style="width: <?= $percent ?>%;"></div></div>
-            <a href="#registrace" class="btn-main" style="padding: 12px 30px; font-size: 1rem; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Registrovat</a>
+            <a href="/registrace<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main" style="padding: 12px 30px; font-size: 1rem; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Registrovat</a>
         </div>
     </div>
 
@@ -487,9 +633,10 @@ if (empty($stops) && !empty($data['city'])) {
     </div>
 
     <script>
-        // Hero Slider Script
+        // Hero Slider Script (vypnuto při prefers-reduced-motion)
         const slides = document.querySelectorAll('.slide');
-        if (slides.length > 1) {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (slides.length > 1 && !prefersReducedMotion) {
             let currentSlide = 0;
             function nextSlide() {
                 slides[currentSlide].classList.remove('active');
@@ -508,6 +655,33 @@ if (empty($stops) && !empty($data['city'])) {
         window.addEventListener('scroll', revealAnimations);
         revealAnimations();
 
+        // Předvyplnění typu účasti dle slotu na /registrace
+        (function () {
+            const typeSelect = document.getElementById('typeSelect');
+            if (!typeSelect) return;
+            const urlParams = new URLSearchParams(window.location.search);
+            const slot = urlParams.get('slot') || <?= isset($prefill_slot) ? json_encode($prefill_slot) : 'null' ?>;
+            if (!slot) return;
+            if (slot === 'morning') {
+                typeSelect.value = 'connect';
+            } else if (slot === 'afternoon') {
+                typeSelect.value = 'prolite';
+            }
+        })();
+
+        // Plynulý scroll na sekci registrace na stránce /registrace
+        (function () {
+            <?php if (!empty($scroll_to_registration)): ?>
+            const regSection = document.getElementById('registrace');
+            if (regSection) {
+                const behavior = prefersReducedMotion ? 'auto' : 'smooth';
+                window.requestAnimationFrame(() => {
+                    regSection.scrollIntoView({ behavior, block: 'start' });
+                });
+            }
+            <?php endif; ?>
+        })();
+
         // Navbar color on scroll
         const mainNav = document.querySelector('nav');
         function updateNavOnScroll() {
@@ -517,7 +691,7 @@ if (empty($stops) && !empty($data['city'])) {
         window.addEventListener('scroll', updateNavOnScroll);
         updateNavOnScroll();
 
-        // Sticky benefit cards focus animation
+        // Sticky benefit cards focus animation (ponecháno kvůli kompatibilitě starého layoutu, u nového obsahu se nepoužije)
         const benefitCards = [...document.querySelectorAll('.benefit-card')];
         if (benefitCards.length) {
             const cardObserver = new IntersectionObserver((entries) => {
@@ -708,6 +882,8 @@ if (empty($stops) && !empty($data['city'])) {
                 });
             });
         }
+
+        // Ticker – pozastavení animace při hoveru řeší CSS, zde nic dalšího nepotřebujeme
     </script>
 
 </body>
