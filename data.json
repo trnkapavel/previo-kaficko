@@ -6,6 +6,7 @@
     "capacity": 70,
     "registered": 10,
     "promo_title": "Jarní roadshow: Název",
+    "automation_images": ["chytre-zamky.png"],
     "stops": [
         {
             "date": "24. března 2026",

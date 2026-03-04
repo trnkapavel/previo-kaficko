@@ -33,6 +33,20 @@ $landing_variant = $landing_config['variant'] ?? 'default';
 $hero_cta_slot = $landing_config['hero_cta_slot'] ?? null;
 $page_title_suffix = $landing_config['page_title_suffix'] ?? '';
 
+// Program: na ranní LP jen dopolední, na odpolední jen odpolední (jeden blok + subtitle)
+$program_single = null;
+$program_subtitle = '';
+$fixed_type = null;
+if ($landing_variant === 'morning') {
+    $program_single = $data['program_connect'] ?? [];
+    $program_subtitle = 'Dopoledne: Connect (pro neklienty)';
+    $fixed_type = 'connect';
+} elseif ($landing_variant === 'afternoon') {
+    $program_single = $data['program_prolite'] ?? [];
+    $program_subtitle = 'Odpoledne: PRO/LITE (pro klienty)';
+    $fixed_type = 'prolite';
+}
+
 // 3. Výběr názvu a textu hero sekce z configu nebo z dat
 $hero_title = $landing_config['hero_title'] ?? ($data['promo_title'] ?? 'Previo MeetUp');
 $hero_text = $landing_config['hero_text'] ?? ($data['promo_text'] ?? '');
@@ -127,6 +141,13 @@ $history_locations = $data['history_locations'] ?? [
 
 // Slot pro přesměrování na /registrace
 $slot_param = isset($landing_slot) ? $landing_slot : $hero_cta_slot;
+
+// Fotky sekce „Automatizace v praxi“ (chytrý klíč / Smartkey) – z data.json, fallback chytre-zamky.png
+$automation_images = $data['automation_images'] ?? ['chytre-zamky.png'];
+$automation_image = is_array($automation_images) ? ($automation_images[0] ?? 'chytre-zamky.png') : $automation_images;
+if (strpos($automation_image, 'img/') !== 0 && strpos($automation_image, '/') === false) {
+    $automation_image = 'img/' . $automation_image;
+}
 ?>
 
 <!DOCTYPE html>
@@ -299,7 +320,7 @@ $slot_param = isset($landing_slot) ? $landing_slot : $hero_cta_slot;
                     <li>✓ Check‑in proces bez recepčního</li>
                 </ul>
             </div>
-            <div class="hw-image"></div>
+            <div class="hw-image" style="background-image: url('<?= htmlspecialchars($automation_image) ?>');"></div>
             </div>
         </div>
     </section>
@@ -307,8 +328,21 @@ $slot_param = isset($landing_slot) ? $landing_slot : $hero_cta_slot;
     <section id="program" style="background: var(--gray-light);">
         <div class="container">
             <span class="section-tag reveal">Harmonogram</span>
-            <h2 class="section-title reveal">Program nabitý praxí</h2>
-            
+            <h2 class="section-title reveal"><?= $program_single !== null ? htmlspecialchars($program_subtitle) : 'Program nabitý praxí' ?></h2>
+
+            <?php if ($program_single !== null): ?>
+            <div class="program-list reveal">
+                <?php foreach ($program_single as $item): ?>
+                <div class="program-item">
+                    <div class="time"><?= htmlspecialchars($item['time']) ?></div>
+                    <div class="program-desc">
+                        <h4><?= htmlspecialchars($item['title']) ?></h4>
+                        <p><?= htmlspecialchars($item['desc']) ?></p>
+                    </div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php else: ?>
             <div class="tab-nav reveal stagger-1">
                 <button class="tab-btn active" onclick="openTab(event, 'connect')">Dopoledne: Connect (pro neklienty)</button>
                 <button class="tab-btn" onclick="openTab(event, 'prolite')">Odpoledne: PRO/LITE (pro klienty)</button>
@@ -337,6 +371,7 @@ $slot_param = isset($landing_slot) ? $landing_slot : $hero_cta_slot;
                 </div>
                 <?php endforeach; ?>
             </div>
+            <?php endif; ?>
         </div>
     </section>
 
@@ -447,12 +482,19 @@ $slot_param = isset($landing_slot) ? $landing_slot : $hero_cta_slot;
                             </select>
                         </div>
 
+                        <?php if ($fixed_type !== null): ?>
+                        <input type="hidden" name="type" value="<?= htmlspecialchars($fixed_type) ?>">
+                        <p class="reg-type-fixed full-width" style="margin: 0; padding: 14px 20px; background: var(--gray-light); border-radius: 3px; font-weight: 600; color: var(--text-main);">
+                            Typ účasti: <?= htmlspecialchars($program_subtitle) ?>
+                        </p>
+                        <?php else: ?>
                         <select name="type" id="typeSelect" required class="full-width">
                             <option value="">Vyberte typ účasti</option>
                             <option value="connect">Dopoledne: Connect (Nejsem klient Previa)</option>
                             <option value="prolite">Odpoledne: PRO/LITE (Jsem klient Previa)</option>
                             <option value="both">Celý den</option>
                         </select>
+                        <?php endif; ?>
                         <textarea name="question" rows="3" placeholder="Vaše dotazy nebo témata, která chcete na akci řešit..." class="full-width"></textarea>
                         
                         <button type="submit" class="btn-main full-width" style="margin-top: 10px; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Dokončit registraci</button>
