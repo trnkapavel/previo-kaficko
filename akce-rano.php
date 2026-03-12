@@ -492,15 +492,50 @@ require __DIR__ . '/inc-page-content.php';
             });
         }
         function closeModal() { document.getElementById('successModal').style.display = 'none'; }
+
+        // Newsletter
+        var nlForm = document.getElementById('newsletterForm');
+        if (nlForm) {
+            nlForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var btn = nlForm.querySelector('button[type="submit"]');
+                var msg = document.getElementById('newsletterMsg');
+                btn.disabled = true;
+                btn.textContent = 'Odesílám…';
+                fetch('process_newsletter.php', { method: 'POST', body: new FormData(nlForm) })
+                    .then(function(r) { return r.json(); })
+                    .then(function(data) {
+                        msg.style.display = 'block';
+                        if (data.success) {
+                            msg.style.color = '#fff';
+                            msg.textContent = data.message || 'Přihlášení proběhlo úspěšně!';
+                            nlForm.style.display = 'none';
+                        } else {
+                            msg.style.color = '#ffd5d5';
+                            msg.textContent = data.message || 'Něco se nepovedlo. Zkuste to znovu.';
+                            btn.disabled = false;
+                            btn.textContent = 'Přihlásit odběr';
+                        }
+                    })
+                    .catch(function() {
+                        msg.style.display = 'block';
+                        msg.style.color = '#ffd5d5';
+                        msg.textContent = 'Chyba připojení. Zkuste to znovu.';
+                        btn.disabled = false;
+                        btn.textContent = 'Přihlásit odběr';
+                    });
+            });
+        }
     </script>
 
     <div class="newsletter-section">
         <div class="container reveal">
             <h2 style="font-family: 'Source Sans 3'; font-size: 2.5rem; margin-bottom: 20px;">Chcete dostávat novinky z oboru?</h2>
-            <form class="newsletter-form">
-                <input type="email" placeholder="Váš e-mail" class="newsletter-input" required>
+            <form class="newsletter-form" id="newsletterForm">
+                <input type="email" name="email" placeholder="Váš e-mail" class="newsletter-input" required>
                 <button type="submit" class="btn-dark">Přihlásit odběr</button>
             </form>
+            <p id="newsletterMsg" style="margin-top:16px;font-size:1rem;display:none;"></p>
         </div>
     </div>
 
