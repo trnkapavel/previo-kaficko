@@ -237,9 +237,28 @@ require __DIR__ . '/inc-page-content.php';
                 </div>
                 <?php endforeach; ?>
             </div>
-            <p style="text-align: center; margin-top: 24px;">
-                <a href="/registrace<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main" style="background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Přejít na registrační formulář</a>
-            </p>
+            <div class="reg-form-container reveal stagger-2">
+                <h3 style="font-size: 1.8rem; margin-bottom: 10px; text-align: center;"><?= htmlspecialchars($reg_form_title) ?></h3>
+                <p style="text-align: center; margin-bottom: 30px; opacity: 0.7;"><?= htmlspecialchars($reg_form_desc) ?></p>
+                <form id="regForm" action="process_registration.php" method="POST">
+                    <input type="hidden" name="event_details" value="<?= htmlspecialchars(($data['city'] ?? '') . ' (' . ($data['date'] ?? '') . ')') ?>">
+                    <input type="hidden" name="location" value="<?= htmlspecialchars($data['city'] ?? '') ?>">
+                    <div class="reg-form-grid">
+                        <input type="text" name="name" placeholder="Jméno a příjmení" required>
+                        <input type="text" name="hotel" placeholder="Název ubytování" required>
+                        <input type="email" name="email" placeholder="E-mail" required>
+                        <input type="tel" name="phone" placeholder="Telefon (pro SMS připomínku)">
+                        <select name="type" required class="full-width">
+                            <option value="">Vyberte typ účasti</option>
+                            <option value="connect" <?= $fixed_type === 'connect' ? 'selected' : '' ?>>Dopoledne: Connect (Nejsem klient Previa)</option>
+                            <option value="prolite" <?= $fixed_type === 'prolite' ? 'selected' : '' ?>>Odpoledne: PRO/LITE (Jsem klient Previa)</option>
+                            <option value="both">Celý den</option>
+                        </select>
+                        <textarea name="question" rows="3" placeholder="Vaše dotazy nebo témata, která chcete na akci řešit..." class="full-width"></textarea>
+                        <button type="submit" class="btn-main full-width" style="margin-top: 10px; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Odeslat závaznou registraci</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </section>
 
@@ -330,7 +349,48 @@ require __DIR__ . '/inc-page-content.php';
             }
         });
         <?php endif; ?>
+
+        // Formulář – AJAX odeslání
+        var regForm = document.getElementById('regForm');
+        if (regForm) {
+            regForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                var btn = this.querySelector('button[type="submit"]');
+                var originalText = btn.innerText;
+                btn.innerText = 'Odesílám...'; btn.disabled = true;
+                fetch('process_registration.php', { method: 'POST', body: new FormData(e.target) })
+                .then(function(res) { return res.text(); })
+                .then(function(text) {
+                    try {
+                        var data = JSON.parse(text);
+                        if (data.success) {
+                            document.getElementById('successModal').style.display = 'flex';
+                            e.target.reset();
+                        } else { alert('Chyba: ' + data.message); }
+                    } catch(err) { alert('Chyba serveru.'); console.log(text); }
+                })
+                .catch(function() { alert('Chyba připojení.'); })
+                .finally(function() { btn.innerText = originalText; btn.disabled = false; });
+            });
+        }
+        function closeModal() { document.getElementById('successModal').style.display = 'none'; }
     </script>
+
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div class="check-icon">✓</div>
+            <h2 style="color: #333;">Registrace přijata!</h2>
+            <p style="margin: 20px 0; color: #666;">Potvrzení a detaily jsme vám odeslali na e-mail.</p>
+            <div style="background: #f8f9fa; padding: 25px; border-radius: 15px; margin: 25px 0;">
+                <p style="font-weight: 700; margin-bottom: 15px; color: var(--primary);">Uložte si termín do kalendáře:</p>
+                <div>
+                    <a href="download_ics.php" class="btn-cal outlook">Outlook / iCal</a>
+                </div>
+            </div>
+            <button onclick="closeModal()" class="btn-main" style="width: 100%;">Zavřít okno</button>
+        </div>
+    </div>
 </body>
 </html>
 
