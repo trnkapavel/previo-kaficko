@@ -231,7 +231,7 @@ require __DIR__ . '/inc-page-content.php';
                 <div class="process-line"></div>
                 <?php foreach ($reg_steps as $step): ?>
                 <div class="step">
-                    <div class="step-icon" aria-hidden="true"><?= htmlspecialchars($step['icon'] ?? '') ?></div>
+                    <div class="step-icon" aria-hidden="true"><i data-lucide="<?= htmlspecialchars($step['icon'] ?? 'check') ?>"></i></div>
                     <h4 style="font-size: 1.2rem;"><?= htmlspecialchars($step['title'] ?? '') ?></h4>
                     <p style="opacity: 0.7;"><?= htmlspecialchars($step['text'] ?? '') ?></p>
                 </div>
@@ -248,12 +248,7 @@ require __DIR__ . '/inc-page-content.php';
                         <input type="text" name="hotel" placeholder="Název ubytování" required>
                         <input type="email" name="email" placeholder="E-mail" required>
                         <input type="tel" name="phone" placeholder="Telefon (pro SMS připomínku)">
-                        <select name="type" required class="full-width">
-                            <option value="">Vyberte typ účasti</option>
-                            <option value="connect" <?= $fixed_type === 'connect' ? 'selected' : '' ?>>Dopoledne: Connect (Nejsem klient Previa)</option>
-                            <option value="prolite" <?= $fixed_type === 'prolite' ? 'selected' : '' ?>>Odpoledne: PRO/LITE (Jsem klient Previa)</option>
-                            <option value="both">Celý den</option>
-                        </select>
+                        <input type="hidden" name="type" value="<?= htmlspecialchars($fixed_type) ?>">
                         <textarea name="question" rows="3" placeholder="Vaše dotazy nebo témata, která chcete na akci řešit..." class="full-width"></textarea>
                         <button type="submit" class="btn-main full-width" style="margin-top: 10px; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Odeslat závaznou registraci</button>
                     </div>

@@ -56,9 +56,9 @@
     "reg_tag": "Registrace",
     "reg_title": "Jak to funguje? Zajistěte si místo",
     "reg_steps": [
-        { "icon": "✍️", "title": "Vyplnění přihlášky", "text": "Vyplnění trvá přibližně jednu minutu." },
-        { "icon": "✉️", "title": "Potvrzovací e‑mail", "text": "Potvrzení obdržíte e‑mailem." },
-        { "icon": "📅", "title": "Uložení do kalendáře", "text": "Pro snadné připomenutí termínu." }
+        { "icon": "pencil", "title": "Vyplnění přihlášky", "text": "Vyplnění trvá přibližně jednu minutu." },
+        { "icon": "mail", "title": "Potvrzovací e‑mail", "text": "Potvrzení obdržíte e‑mailem." },
+        { "icon": "calendar", "title": "Uložení do kalendáře", "text": "Pro snadné připomenutí termínu." }
     ],
     "reg_form_title": "Registrační formulář",
     "reg_form_desc": "Kapacita je omezena. Vyplňte prosím pečlivě všechny údaje.",
