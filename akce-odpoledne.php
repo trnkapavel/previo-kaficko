@@ -488,6 +488,98 @@ require __DIR__ . '/inc-page-content.php';
         function closeModal() { document.getElementById('successModal').style.display = 'none'; }
     </script>
 
+    <div class="newsletter-section">
+        <div class="container reveal">
+            <h2 style="font-family: 'Source Sans 3'; font-size: 2.5rem; margin-bottom: 20px;">Chcete dostávat novinky z oboru?</h2>
+            <form class="newsletter-form">
+                <input type="email" placeholder="Váš e-mail" class="newsletter-input" required>
+                <button type="submit" class="btn-dark">Přihlásit odběr</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-wrap">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="#" class="footer-brand-logo" aria-label="Previo domů">
+                        <img src="img/logo-previo-white.svg" alt="Previo">
+                    </a>
+                    <p class="footer-company">PREVIO s.r.o.</p>
+                    <p class="footer-address">Milady Horákové 13<br>602 00 Brno<br>Česká republika</p>
+                </div>
+
+                <div class="footer-col">
+                    <h4 class="footer-title">Užitečné odkazy</h4>
+                    <ul>
+                        <li><a href="#program">Program</a></li>
+                        <li><a href="#lokalita">Kde to bude</a></li>
+                        <li><a href="#registrace">Registrace</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4 class="footer-title">Produkty</h4>
+                    <ul>
+                        <li><a href="#">Hotelový systém</a></li>
+                        <li><a href="#">Channel Manager</a></li>
+                        <li><a href="#">Booking Engine</a></li>
+                        <li><a href="#">Integrace</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4 class="footer-title">Ceny</h4>
+                    <ul>
+                        <li><a href="#">Ceník řešení</a></li>
+                        <li><a href="#">Demo ukázka</a></li>
+                        <li><a href="#">Časté dotazy</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4 class="footer-title">O nás</h4>
+                    <ul>
+                        <li><a href="#proc">Naše mise</a></li>
+                        <li><a href="#lektori">Tým expertů</a></li>
+                        <li><a href="#">Kariéra</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h4 class="footer-title">Kontakt</h4>
+                    <div class="footer-contact-item">
+                        <span class="footer-contact-label">Klientská linka</span>
+                        <a class="footer-contact-value" href="tel:+420530331500">+420 530 331 500</a>
+                        <p class="footer-contact-meta">Po–Pá: 8:00–17:00</p>
+                    </div>
+                    <div class="footer-contact-item">
+                        <span class="footer-contact-label">E-mail</span>
+                        <a class="footer-contact-value" href="mailto:info@previo.cz">info@previo.cz</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-partners">
+                <h4 class="footer-title">Hlavní partneři</h4>
+                <div class="footer-partners-row">
+                    <a href="https://www.hotel.cz" target="_blank" rel="noopener noreferrer" class="partner-link">Hotel.cz</a>
+                    <span class="partner-sep">•</span>
+                    <a href="https://www.spa.cz" target="_blank" rel="noopener noreferrer" class="partner-link">Spa.cz</a>
+                    <span class="partner-sep">•</span>
+                    <a href="https://www.penzion.cz" target="_blank" rel="noopener noreferrer" class="partner-link">Penzion.cz</a>
+                    <span class="partner-sep">•</span>
+                    <a href="https://www.hotely.cz" target="_blank" rel="noopener noreferrer" class="partner-link">Hotely.cz</a>
+                    <span class="partner-sep">•</span>
+                    <a href="https://www.slevomat.cz" target="_blank" rel="noopener noreferrer" class="partner-link">Slevomat</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">© 2026 Previo. Všechna práva vyhrazena.</div>
+        </div>
+    </footer>
+
     <div id="successModal" class="modal-overlay">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal()">&times;</span>
