@@ -1,13 +1,17 @@
 <?php
 /**
- * Sdílená admin logika pro admin-rano.php a admin-odpoledne.php.
+ * Sdílená admin logika.
  * Před includováním musí být nastaveno:
- *   $data_file      – např. 'data-rano.json'
- *   $slot           – např. 'rano' nebo 'odpoledne' (pro předpony názvů souborů)
- *   $slot_label     – např. '🌅 Ráno' nebo '🌇 Odpoledne' (titulek v adminu)
- *   $admin_url      – např. 'admin-rano.php' nebo 'admin-odpoledne.php'
+ *   $data_file        – např. 'data-rano.json'
+ *   $slot             – 'rano' nebo 'odpoledne' (předpony názvů souborů)
+ *   $slot_label       – titulek v adminu
+ *   $admin_url        – URL aktuálního adminu (pro add/remove GET akce)
  *   $program_subtitle – popis programové sekce
+ *   $switch_url_rano      (volitelné) – URL pro přepnutí na ranní admin
+ *   $switch_url_odpoledne (volitelné) – URL pro přepnutí na odpolední admin
  */
+$switch_url_rano      = $switch_url_rano      ?? 'admin-rano.php';
+$switch_url_odpoledne = $switch_url_odpoledne ?? 'admin-odpoledne.php';
 
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -441,8 +445,8 @@ if (!isset($data) || !$data) {
         <?php if (isset($error)) echo "<div class='alert error'>" . htmlspecialchars($error) . "</div>"; ?>
 
         <div class="admin-switcher">
-            <a href="admin-rano.php" class="<?= $slot === 'rano' ? 'active' : '' ?>">🌅 Akce ráno</a>
-            <a href="admin-odpoledne.php" class="<?= $slot === 'odpoledne' ? 'active' : '' ?>">🌇 Akce odpoledne</a>
+            <a href="<?= htmlspecialchars($switch_url_rano) ?>" class="<?= $slot === 'rano' ? 'active' : '' ?>">🌅 Akce ráno</a>
+            <a href="<?= htmlspecialchars($switch_url_odpoledne) ?>" class="<?= $slot === 'odpoledne' ? 'active' : '' ?>">🌇 Akce odpoledne</a>
         </div>
 
         <div class="section-nav">
