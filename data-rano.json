@@ -1,0 +1,77 @@
+{
+    "city": "Opava",
+    "date": "24. března 2026",
+    "time": "09:30",
+    "venue": "Pytloun Grand Hotel Imperial",
+    "capacity": 70,
+    "registered": 10,
+    "promo_title": "Jarní roadshow: Název",
+    "promo_text": "Přicházíme do vašeho regionu. Legislativní novinky, práce s cenou a technologie, které vám uvolní ruce.",
+    "hero_title": "",
+    "hero_text": "",
+    "hero_images": [],
+    "program": [
+        { "time": "09:30", "title": "Uvítání hostů & Ranní káva ☕", "desc": "Neformální start dne a seznámení." },
+        { "time": "10:00", "title": "Novinky ze světa turizmu", "desc": "Aktuální témata, legislativní strašáci (e-Turista) a lokální statistiky." },
+        { "time": "10:30", "title": "Jak řídit provoz efektivně", "desc": "Práce s cenou, psychologie hosta a co musí obsahovat moderní web." },
+        { "time": "11:15", "title": "Praktická ukázka řešení", "desc": "Zvýšení přímých rezervací a automatizace admin tasků." },
+        { "time": "12:00 +", "title": "Networking", "desc": "Prostor pro otázky a setkání s kolegy u občerstvení." }
+    ],
+    "stats_intro": "Tvoříme největší komunitu hoteliérů v Česku. Přidejte se.",
+    "stats_items": [
+        { "number": "120+", "label": "Zastávek za námi" },
+        { "number": "1 500+", "label": "Vypitých káv s klienty ☕" },
+        { "number": "98 %", "label": "Účastníků akci doporučuje" }
+    ],
+    "content_tag": "Obsah akce",
+    "content_title": "Praktická témata pro růst ubytování",
+    "intro_items": [
+        { "title": "🚀 Pro koho je akce určena?", "text": "Pro majitele, provozní a recepční hotelů i penzionů. Ať už Previo používáte, nebo teprve hledáte inspiraci." },
+        { "title": "💡 Hlavní témata", "text": "E-Turista bez stresu, Revenue Management v praxi, psychologie hosta na mobilu a reálné využití AI v hotelnictví." }
+    ],
+    "content_items": [
+        { "icon": "trending-up", "title": "Růst tržeb & práce s cenou", "text": "Ukážeme vám, jak reagovat na lokální festivaly a události. Naučíme vás pracovat s minimální délkou pobytu a dynamickou cenotvorbou.", "bullets": ["Lokální statistiky a průměrné ceny v regionu.", "Strategie pro zvýšení přímých rezervací."] },
+        { "icon": "file-check", "title": "Legislativa bez vrásek (e‑Turista)", "text": "Legislativní změny mohou být náročné. Ukážeme vám e‑Turistu jako příležitost k digitalizaci a zjednodušení administrativy.", "bullets": ["Aktuální briefing: co musíte splnit.", "Automatizace hlášení: jak to systém vyřeší za vás."] },
+        { "icon": "sparkles", "title": "Budoucnost s AI a automatizací", "text": "Automatizujte rutinní agendu. Cesta hosta začíná na mobilu – ukážeme si, jak efektivně využít AI nástroje v každodenním provozu.", "bullets": ["Psaní textů a reakcí na recenze pomocí AI.", "Cesta moderního hosta: od vyhledávání po check‑out."] }
+    ],
+    "automation_tag": "Automatizace v praxi",
+    "automation_subtitle": "Vyzkoušejte naživo",
+    "automation_title": "Automatizace v praxi",
+    "automation_text": "Součástí programu jsou praktické ukázky fungování chytrých klik a samoobslužných kiosků.",
+    "automation_bullets": ["Integrace zámkových systémů (např. Smartkey klika)", "Check‑in proces bez recepčního"],
+    "automation_images": ["chytre-zamky.png"],
+    "stops": [
+        {
+            "date": "24. března 2026",
+            "time_from": "09:30",
+            "time_to": "12:00",
+            "title": "V březnu budeme v Ostravě a na Moravě",
+            "badges": ["#roadshow", "#previo", "#opava"],
+            "description": "Akce se koná v hotelu Pytloun Grand Hotel Imperial. Dopolední blok Connect pro neklienty."
+        }
+    ],
+    "speakers_tag": "Řečníci",
+    "speakers_title": "Experti s praxí v oboru",
+    "speakers": [],
+    "reg_tag": "Registrace",
+    "reg_title": "Jak to funguje? Zajistěte si místo",
+    "reg_steps": [
+        { "icon": "✍️", "title": "Vyplnění přihlášky", "text": "Vyplnění trvá přibližně jednu minutu." },
+        { "icon": "✉️", "title": "Potvrzovací e‑mail", "text": "Potvrzení obdržíte e‑mailem." },
+        { "icon": "📅", "title": "Uložení do kalendáře", "text": "Pro snadné připomenutí termínu." }
+    ],
+    "reg_form_title": "Registrační formulář",
+    "reg_form_desc": "Kapacita je omezena. Vyplňte prosím pečlivě všechny údaje.",
+    "faq_tag": "Vše, co potřebujete vědět",
+    "faq_title": "Časté dotazy",
+    "faq_items": [
+        { "q": "Bude z akce záznam?", "a": "Akce probíhá prezenčně. Videozáznam neplánujeme, po akci však zašleme materiály." },
+        { "q": "Mohu vzít kolegu?", "a": "Ano. Každou osobu prosíme zaregistrovat samostatně z důvodu kapacity." },
+        { "q": "Kolik stojí vstupenka?", "a": "Pro všechny registrované účastníky je vstup zdarma." }
+    ],
+    "history_section_title": "Proběhlé akce",
+    "past_events": [
+        { "image": "img/cover1.jpg", "date": "15. 1. 2025", "place": "Praha" },
+        { "image": "img/cover2.jpg", "date": "22. 2. 2025", "place": "Brno" }
+    ]
+}
