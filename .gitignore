@@ -1,3 +1,6 @@
 .DS_Store
 backup.zip
 error_log.txt
+config.php
+vendor/
+tmp/

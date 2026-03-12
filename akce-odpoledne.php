@@ -70,8 +70,26 @@ $slot_param = $landing_slot ?? $hero_cta_slot;
 $locations = isset($data['locations']) && is_array($data['locations']) ? $data['locations'] : (isset($data['city']) ? [$data['city']] : []);
 $stops = $data['stops'] ?? [];
 if (empty($stops) && !empty($data['city'])) {
-    $stops = [['date' => $data['date'] ?? '', 'time_from' => $data['time'] ?? '09:00', 'time_to' => '15:00', 'title' => $data['promo_title'] ?? ('Místo konání: ' . $data['city']), 'badges' => ['#roadshow', '#previo'], 'description' => 'Akce se koná v ' . ($data['venue'] ?? $data['city']) . '.']];
+    $stops = [['date' => $data['date'] ?? '', 'city' => $data['city'] ?? '', 'time_from' => $data['time'] ?? '13:00', 'time_to' => '17:00', 'title' => $data['promo_title'] ?? ('Místo konání: ' . $data['city']), 'badges' => ['#roadshow', '#previo'], 'description' => 'Akce se koná v ' . ($data['venue'] ?? $data['city']) . '.']];
 }
+
+// Nejbližší nadcházející zastávka pro pill-bar
+function parseCzechDateOdpoledne(string $s): int {
+    static $m = ['ledna'=>1,'února'=>2,'března'=>3,'dubna'=>4,'května'=>5,'června'=>6,'července'=>7,'srpna'=>8,'září'=>9,'října'=>10,'listopadu'=>11,'prosince'=>12];
+    return preg_match('/(\d+)\.\s*(\S+)\s+(\d{4})/', $s, $p) ? mktime(0,0,0,$m[strtolower($p[2])]??0,(int)$p[1],(int)$p[3]) : 0;
+}
+$today_ts = strtotime('today');
+$nearest_stop = null;
+foreach ($stops as $s) {
+    $ts = parseCzechDateOdpoledne($s['date'] ?? '');
+    if ($ts >= $today_ts && (!$nearest_stop || $ts < parseCzechDateOdpoledne($nearest_stop['date'] ?? ''))) {
+        $nearest_stop = $s;
+    }
+}
+if (!$nearest_stop) $nearest_stop = $stops[0] ?? null;
+$pill_city = $nearest_stop['city'] ?? $nearest_stop['title'] ?? $city;
+$pill_date = $nearest_stop['date'] ?? $date;
+$pill_time = $nearest_stop['time_from'] ?? '';
 $past_events = isset($data['past_events']) && is_array($data['past_events']) ? $data['past_events'] : [];
 $history_section_title = $data['history_section_title'] ?? 'Proběhlé akce';
 require __DIR__ . '/inc-page-content.php';
@@ -85,15 +103,11 @@ require __DIR__ . '/inc-page-content.php';
     <title>Previo MeetUp | <?= htmlspecialchars($city) ?><?= htmlspecialchars($page_title_suffix) ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script src="https://www.google.com/recaptcha/api.js?render=YOUR_SITE_KEY" async defer></script>
 </head>
 <body>
 
-    <nav>
-        <a class="logo" href="/" aria-label="Previo domů">
-            <img src="img/logo-previo-white.svg" alt="Previo">
-            <span class="logo-tagline">Více hostů. Méně starostí.</span>
-        </a>
-    </nav>
+    <?php require __DIR__ . '/inc-nav.php'; ?>
 
     <header class="hero">
         <div class="hero-bg">
@@ -106,7 +120,7 @@ require __DIR__ . '/inc-page-content.php';
             <h1><?= htmlspecialchars($hero_title) ?></h1>
             <p><?= htmlspecialchars($hero_text) ?></p>
             <div class="hero-actions">
-                <a href="/registrace<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main" style="background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Rezervovat místo</a>
+                <a href="registrace.php<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main" style="background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Rezervovat místo</a>
                 <a href="#program" class="btn-secondary">Zobrazit program</a>
             </div>
         </div>
@@ -125,8 +139,18 @@ require __DIR__ . '/inc-page-content.php';
         <span class="section-tag reveal"><?= htmlspecialchars($content_tag) ?></span>
         <h2 class="section-title reveal"><?= htmlspecialchars($content_title) ?></h2>
         <div class="intro-grid reveal stagger-1">
-            <?php foreach ($intro_items as $it): ?>
-            <div class="intro-item"><h3><?= htmlspecialchars($it['title'] ?? '') ?></h3><p><?= nl2br(htmlspecialchars($it['text'] ?? '')) ?></p></div>
+            <?php foreach ($intro_items as $idx => $it): ?>
+            <div class="intro-item">
+                <span class="intro-item-number"><?= sprintf('%02d', $idx + 1) ?></span>
+                <div class="intro-item-icon-wrap">
+                    <div class="intro-item-icon-ring"></div>
+                    <div class="intro-item-icon-bg" aria-hidden="true">
+                        <i data-lucide="<?= htmlspecialchars($it['icon'] ?? 'star') ?>"></i>
+                    </div>
+                </div>
+                <h3><?= htmlspecialchars($it['title'] ?? '') ?></h3>
+                <p><?= nl2br(htmlspecialchars($it['text'] ?? '')) ?></p>
+            </div>
             <?php endforeach; ?>
         </div>
         <div class="content-grid reveal">
@@ -174,10 +198,13 @@ require __DIR__ . '/inc-page-content.php';
 
     <section id="lokalita" class="stops-section">
         <div class="container">
-            <span class="section-tag reveal" style="text-align: center;">Příští zastávka</span>
+            <span class="section-tag reveal" style="text-align: center;">Příští zastávky</span>
             <div class="stops-list">
-                <?php foreach ($stops as $i => $stop): ?>
-                <div class="stop-strip reveal <?= $i > 0 ? 'stagger-1' : '' ?>">
+                <?php foreach ($stops as $i => $stop):
+                    $is_nearest = ($nearest_stop && ($stop['date'] ?? '') === ($nearest_stop['date'] ?? '') && ($stop['city'] ?? '') === ($nearest_stop['city'] ?? ''));
+                ?>
+                <div class="stop-strip reveal <?= $i > 0 ? 'stagger-1' : '' ?><?= $is_nearest ? ' stop-strip--nearest' : '' ?>">
+                    <?php if ($is_nearest): ?><span class="stop-nearest-badge">Nejbližší</span><?php endif; ?>
                     <div class="stop-date-block">
                         <time class="stop-date" datetime="<?= htmlspecialchars($stop['date'] ?? '') ?>"><?= htmlspecialchars($stop['date'] ?? '') ?></time>
                         <p class="stop-time-range"><?= htmlspecialchars($stop['time_from'] ?? '') ?> – <?= htmlspecialchars($stop['time_to'] ?? '') ?></p>
@@ -196,7 +223,7 @@ require __DIR__ . '/inc-page-content.php';
                         <?php endif; ?>
                     </div>
                     <div class="stop-cta">
-                        <a href="/registrace<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main stop-reg-btn">Registrace</a>
+                        <a href="registrace.php<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main stop-reg-btn">Zajistit místo</a>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -259,7 +286,7 @@ require __DIR__ . '/inc-page-content.php';
             <span class="section-tag"><?= htmlspecialchars($faq_tag) ?></span>
             <h2 class="section-title" style="margin-bottom: 50px;"><?= htmlspecialchars($faq_title) ?></h2>
             <?php foreach ($faq_items as $faq): ?>
-            <div class="faq-item"><span class="faq-question"><?= htmlspecialchars($faq['q'] ?? '') ?></span><p class="faq-answer"><?= nl2br(htmlspecialchars($faq['a'] ?? '')) ?></p></div>
+            <div class="faq-item"><button class="faq-question" type="button"><?= htmlspecialchars($faq['q'] ?? '') ?></button><p class="faq-answer"><?= nl2br(htmlspecialchars($faq['a'] ?? '')) ?></p></div>
             <?php endforeach; ?>
         </div>
     </section>
@@ -294,22 +321,103 @@ require __DIR__ . '/inc-page-content.php';
 
     <div class="pill-bar">
         <div>
-            <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary); letter-spacing: 1px;">Odpolední akce</span>
+            <span style="font-size: 0.75rem; font-weight: 800; color: var(--primary); letter-spacing: 1px; text-transform: uppercase;">Nejbližší zastávka</span>
             <strong style="display: block; font-size: 1.1rem; color: var(--text-main);">
-                <?= htmlspecialchars($city) ?> (<?= htmlspecialchars($date) ?>)
+                <?= htmlspecialchars($pill_city) ?> &ndash; <?= htmlspecialchars($pill_date) ?><?= $pill_time ? ', ' . htmlspecialchars($pill_time) : '' ?>
             </strong>
         </div>
         <div class="progress-box">
             <span style="font-size: 0.9rem; font-weight: 600; color: #555;">Zbývá <?= $free_spots ?> míst</span>
             <div class="progress-bg"><div class="progress-fill" style="width: <?= $percent ?>%;"></div></div>
-            <a href="/registrace<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main" style="padding: 12px 30px; font-size: 1rem; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Registrovat</a>
+            <a href="registrace.php<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main" style="padding: 12px 30px; font-size: 1rem; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Zajistit místo</a>
         </div>
     </div>
 
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
     <script>
         lucide.createIcons();
-        // Zobrazení prvků s třídou .reveal (hero text, program, pill-bar)
+
+        // Navbar scroll
+        const mainNav = document.querySelector('nav');
+        function updateNavOnScroll() { if (mainNav) mainNav.classList.toggle('nav-scrolled', window.scrollY > 24); }
+        window.addEventListener('scroll', updateNavOnScroll);
+        updateNavOnScroll();
+
+        // Desktop dropdowns
+        const dropdownToggles = [...document.querySelectorAll('.nav-dropdown-toggle')];
+        function getDropdownPanel(btn) { return document.getElementById(btn.getAttribute('aria-controls')); }
+        function getDropdownLinks(btn) { const p = getDropdownPanel(btn); return p ? [...p.querySelectorAll('a')] : []; }
+        function setDropdownState(btn, isOpen) {
+            btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+            getDropdownPanel(btn)?.closest('.dropdown')?.classList.toggle('open', isOpen);
+        }
+        function closeDesktopDropdowns(except = null) {
+            dropdownToggles.forEach(b => { if (b !== except) setDropdownState(b, false); });
+        }
+        function openDesktopDropdown(btn, focus = null) {
+            closeDesktopDropdowns(btn); setDropdownState(btn, true);
+            const links = getDropdownLinks(btn);
+            if (links.length && focus === 'first') links[0].focus();
+            if (links.length && focus === 'last') links[links.length - 1].focus();
+        }
+        dropdownToggles.forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.getAttribute('aria-expanded') === 'true' ? setDropdownState(btn, false) : openDesktopDropdown(btn);
+            });
+            btn.addEventListener('keydown', e => {
+                if (e.key === 'ArrowDown') { e.preventDefault(); openDesktopDropdown(btn, 'first'); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); openDesktopDropdown(btn, 'last'); }
+                else if (e.key === 'Escape') { e.preventDefault(); setDropdownState(btn, false); btn.focus(); }
+            });
+            const panel = getDropdownPanel(btn);
+            if (!panel) return;
+            panel.addEventListener('keydown', e => {
+                const links = getDropdownLinks(btn); const idx = links.indexOf(document.activeElement);
+                if (idx === -1) return;
+                if (e.key === 'ArrowDown') { e.preventDefault(); links[(idx + 1) % links.length].focus(); }
+                else if (e.key === 'ArrowUp') { e.preventDefault(); links[(idx - 1 + links.length) % links.length].focus(); }
+                else if (e.key === 'Escape') { e.preventDefault(); setDropdownState(btn, false); btn.focus(); }
+            });
+            panel.addEventListener('focusout', e => {
+                if (!e.relatedTarget || !panel.closest('.dropdown')?.contains(e.relatedTarget)) setDropdownState(btn, false);
+            });
+        });
+        document.addEventListener('click', e => { if (!e.target.closest('.nav-item.dropdown')) closeDesktopDropdowns(); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDesktopDropdowns(); });
+
+        // Mobile menu
+        const menuToggle = document.querySelector('.menu-toggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (menuToggle && mobileMenu) {
+            menuToggle.addEventListener('click', () => {
+                const expanded = menuToggle.getAttribute('aria-expanded') === 'true';
+                menuToggle.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+                mobileMenu.hidden = expanded; mobileMenu.classList.toggle('open', !expanded);
+            });
+            mobileMenu.querySelectorAll('.mobile-accordion-toggle').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const expanded = btn.getAttribute('aria-expanded') === 'true';
+                    btn.setAttribute('aria-expanded', expanded ? 'false' : 'true');
+                    const panel = document.getElementById(btn.getAttribute('aria-controls'));
+                    if (panel) panel.hidden = expanded;
+                });
+            });
+            mobileMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => { menuToggle.setAttribute('aria-expanded', 'false'); mobileMenu.hidden = true; mobileMenu.classList.remove('open'); });
+            });
+        }
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var item = this.closest('.faq-item');
+                var isOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item.open').forEach(function(el) { el.classList.remove('open'); });
+                if (!isOpen) { item.classList.add('open'); }
+            });
+        });
+
+        // Scroll-reveal animace
         function revealAnimations() {
             document.querySelectorAll('.reveal').forEach(function(el) {
                 if (el.getBoundingClientRect().top < window.innerHeight - 120) {
@@ -318,7 +426,7 @@ require __DIR__ . '/inc-page-content.php';
             });
         }
         window.addEventListener('scroll', revealAnimations);
-        revealAnimations();
+        requestAnimationFrame(function() { requestAnimationFrame(revealAnimations); });
 
         // Hero slider
         const slides = document.querySelectorAll('.slide');
@@ -342,7 +450,7 @@ require __DIR__ . '/inc-page-content.php';
         });
         <?php endif; ?>
 
-        // Formulář – AJAX odeslání
+        // Formulář – AJAX odeslání s reCAPTCHA v3
         var regForm = document.getElementById('regForm');
         if (regForm) {
             regForm.addEventListener('submit', function(e) {
@@ -350,19 +458,31 @@ require __DIR__ . '/inc-page-content.php';
                 var btn = this.querySelector('button[type="submit"]');
                 var originalText = btn.innerText;
                 btn.innerText = 'Odesílám...'; btn.disabled = true;
-                fetch('process_registration.php', { method: 'POST', body: new FormData(e.target) })
-                .then(function(res) { return res.text(); })
-                .then(function(text) {
-                    try {
-                        var data = JSON.parse(text);
-                        if (data.success) {
-                            document.getElementById('successModal').style.display = 'flex';
-                            e.target.reset();
-                        } else { alert('Chyba: ' + data.message); }
-                    } catch(err) { alert('Chyba serveru.'); console.log(text); }
-                })
-                .catch(function() { alert('Chyba připojení.'); })
-                .finally(function() { btn.innerText = originalText; btn.disabled = false; });
+                var form = e.target;
+                var submitForm = function(token) {
+                    var fd = new FormData(form);
+                    fd.append('recaptcha_token', token || '');
+                    fetch('process_registration.php', { method: 'POST', body: fd })
+                    .then(function(res) { return res.text(); })
+                    .then(function(text) {
+                        try {
+                            var data = JSON.parse(text);
+                            if (data.success) {
+                                document.getElementById('successModal').style.display = 'flex';
+                                form.reset();
+                            } else { alert('Chyba: ' + data.message); }
+                        } catch(err) { alert('Chyba serveru.'); console.log(text); }
+                    })
+                    .catch(function() { alert('Chyba připojení.'); })
+                    .finally(function() { btn.innerText = originalText; btn.disabled = false; });
+                };
+                if (typeof grecaptcha !== 'undefined') {
+                    grecaptcha.ready(function() {
+                        grecaptcha.execute('YOUR_SITE_KEY', { action: 'register' }).then(submitForm);
+                    });
+                } else {
+                    submitForm('');
+                }
             });
         }
         function closeModal() { document.getElementById('successModal').style.display = 'none'; }

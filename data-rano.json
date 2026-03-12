@@ -26,8 +26,8 @@
     "content_tag": "Obsah akce",
     "content_title": "Praktická témata pro růst ubytování",
     "intro_items": [
-        { "title": "🚀 Pro koho je akce určena?", "text": "Pro majitele, provozní a recepční hotelů i penzionů. Ať už Previo používáte, nebo teprve hledáte inspiraci." },
-        { "title": "💡 Hlavní témata", "text": "E-Turista bez stresu, Revenue Management v praxi, psychologie hosta na mobilu a reálné využití AI v hotelnictví." }
+        { "icon": "users", "title": "Pro koho je akce určena?", "text": "Pro majitele, provozní a recepční hotelů i penzionů. Ať už Previo používáte, nebo teprve hledáte inspiraci." },
+        { "icon": "zap", "title": "Hlavní témata", "text": "E-Turista bez stresu, Revenue Management v praxi, psychologie hosta na mobilu a reálné využití AI v hotelnictví." }
     ],
     "content_items": [
         { "icon": "trending-up", "title": "Růst tržeb & práce s cenou", "text": "Ukážeme vám, jak reagovat na lokální festivaly a události. Naučíme vás pracovat s minimální délkou pobytu a dynamickou cenotvorbou.", "bullets": ["Lokální statistiky a průměrné ceny v regionu.", "Strategie pro zvýšení přímých rezervací."] },
@@ -43,11 +43,30 @@
     "stops": [
         {
             "date": "24. března 2026",
+            "city": "Opava",
             "time_from": "09:30",
             "time_to": "12:00",
-            "title": "V březnu budeme v Ostravě a na Moravě",
+            "title": "Opava – Pytloun Grand Hotel Imperial",
             "badges": ["#roadshow", "#previo", "#opava"],
-            "description": "Akce se koná v hotelu Pytloun Grand Hotel Imperial. Dopolední blok Connect pro neklienty."
+            "description": "Dopolední blok Connect pro neklienty Previa. Vstup zdarma."
+        },
+        {
+            "date": "25. března 2026",
+            "city": "Olomouc",
+            "time_from": "09:30",
+            "time_to": "12:00",
+            "title": "Olomouc – Hotel Trinity",
+            "badges": ["#roadshow", "#previo", "#olomouc"],
+            "description": "Dopolední blok Connect pro neklienty Previa. Vstup zdarma."
+        },
+        {
+            "date": "26. března 2026",
+            "city": "Brno",
+            "time_from": "09:30",
+            "time_to": "12:00",
+            "title": "Brno – Hotel Passage",
+            "badges": ["#roadshow", "#previo", "#brno"],
+            "description": "Dopolední blok Connect pro neklienty Previa. Vstup zdarma."
         }
     ],
     "speakers_tag": "Řečníci",

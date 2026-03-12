@@ -30,8 +30,8 @@ if (isset($data['stats_items']) && is_array($data['stats_items'])) {
 $content_tag = $data['content_tag'] ?? 'Obsah akce';
 $content_title = $data['content_title'] ?? 'Praktická témata pro růst ubytování';
 $intro_items = $data['intro_items'] ?? [
-    ['title' => '🚀 Pro koho je akce určena?', 'text' => 'Pro majitele, provozní a recepční hotelů i penzionů. Ať už Previo používáte (odpolední blok), nebo teprve hledáte inspiraci (dopolední blok).'],
-    ['title' => '💡 Hlavní témata', 'text' => 'E-Turista bez stresu, Revenue Management v praxi, psychologie hosta na mobilu a reálné využití AI v hotelnictví.'],
+    ['icon' => 'users', 'title' => 'Pro koho je akce určena?', 'text' => 'Pro majitele, provozní a recepční hotelů i penzionů. Ať už Previo používáte, nebo teprve hledáte inspiraci.'],
+    ['icon' => 'zap', 'title' => 'Hlavní témata', 'text' => 'E-Turista bez stresu, Revenue Management v praxi, psychologie hosta na mobilu a reálné využití AI v hotelnictví.'],
 ];
 if (isset($data['intro_items']) && is_array($data['intro_items'])) {
     $intro_items = $data['intro_items'];
@@ -68,14 +68,12 @@ if (!isset($stops)) {
 // Řečníci
 $speakers_tag = $data['speakers_tag'] ?? 'Řečníci';
 $speakers_title = $data['speakers_title'] ?? 'Experti s praxí v oboru';
-$speakers = $data['speakers'] ?? [
+$speakers_default = [
     ['photo' => 'img/jiri-sindelar.jpeg', 'role' => 'Strategie & Trendy', 'name' => 'Jiří Šindelář', 'bio' => 'Head of Growth. Provází ranní částí. Jiří má přes 10 let praxe v digitalizaci ubytování.'],
     ['photo' => 'img/petr-mares.jpg', 'role' => 'Inovace & Automatizace', 'name' => 'Petr Mareš', 'bio' => 'Odpoledne prezentuje novinky. Vizionář v oblasti zámkových systémů a integrace AI.'],
     ['photo' => 'img/jana-vlkova.jpg', 'role' => 'Konzultace & Workshopy', 'name' => 'Jana V.', 'bio' => 'K dispozici na odpolední individuální konzultace. Řeší konkrétní problémy v nastavení Previa.'],
 ];
-if (isset($data['speakers']) && is_array($data['speakers'])) {
-    $speakers = $data['speakers'];
-}
+$speakers = (!empty($data['speakers']) && is_array($data['speakers'])) ? $data['speakers'] : $speakers_default;
 
 // Registrace
 $reg_tag = $data['reg_tag'] ?? 'Registrace';

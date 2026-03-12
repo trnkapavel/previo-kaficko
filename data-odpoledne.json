@@ -25,8 +25,8 @@
     "content_tag": "Obsah akce",
     "content_title": "Praktická témata pro stávající klienty Previa",
     "intro_items": [
-        { "title": "🚀 Pro koho je akce určena?", "text": "Pro stávající klienty Previa – majitele, provozní a recepční hotelů i penzionů." },
-        { "title": "💡 Hlavní témata", "text": "Novinky v systému, e-Turista pro pokročilé, praktické ukázky automatizace a individuální konzultace." }
+        { "icon": "users", "title": "Pro koho je akce určena?", "text": "Pro stávající klienty Previa – majitele, provozní a recepční hotelů i penzionů." },
+        { "icon": "zap", "title": "Hlavní témata", "text": "Novinky v systému, e-Turista pro pokročilé, praktické ukázky automatizace a individuální konzultace." }
     ],
     "content_items": [
         { "icon": "settings", "title": "Novinky v Previu", "text": "Přehled nových funkcí a vylepšení, která vám ušetří čas každý den.", "bullets": ["Nové funkce v rezervačním systému.", "Tipy pro efektivnější každodenní práci."] },
@@ -42,11 +42,30 @@
     "stops": [
         {
             "date": "24. března 2026",
+            "city": "Opava",
             "time_from": "13:00",
             "time_to": "17:00",
-            "title": "V březnu budeme v Ostravě a na Moravě",
+            "title": "Opava – Pytloun Grand Hotel Imperial",
             "badges": ["#roadshow", "#previo", "#opava"],
-            "description": "Akce se koná v hotelu Pytloun Grand Hotel Imperial. Odpolední blok PRO/LITE pro stávající klienty."
+            "description": "Odpolední blok PRO/LITE pro stávající klienty Previa. Vstup zdarma."
+        },
+        {
+            "date": "25. března 2026",
+            "city": "Olomouc",
+            "time_from": "13:00",
+            "time_to": "17:00",
+            "title": "Olomouc – Hotel Trinity",
+            "badges": ["#roadshow", "#previo", "#olomouc"],
+            "description": "Odpolední blok PRO/LITE pro stávající klienty Previa. Vstup zdarma."
+        },
+        {
+            "date": "26. března 2026",
+            "city": "Brno",
+            "time_from": "13:00",
+            "time_to": "17:00",
+            "title": "Brno – Hotel Passage",
+            "badges": ["#roadshow", "#previo", "#brno"],
+            "description": "Odpolední blok PRO/LITE pro stávající klienty Previa. Vstup zdarma."
         }
     ],
     "speakers_tag": "Řečníci",
