@@ -11,6 +11,15 @@ ini_set('display_errors', '0');
 
 header('Content-Type: application/json; charset=UTF-8');
 
+set_exception_handler(function (Throwable $e): void {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Interní chyba serveru: ' . $e->getMessage() . ' (line ' . $e->getLine() . ')',
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+});
+
 // PHPMailer – nepovinné, fallback na mail()
 $phpmailerAvailable = file_exists(__DIR__ . '/vendor/autoload.php');
 if ($phpmailerAvailable) {
