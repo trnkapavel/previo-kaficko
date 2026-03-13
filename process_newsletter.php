@@ -175,7 +175,7 @@ function buildEmailHtml(string $eEmail, string $eUrl): string {
   <tr><td style="padding:28px 40px 20px;border-bottom:1px solid #f0f0f0;">
     <img src="https://www.trnka.website/kaficko/img/logo-previo.png"
          alt="Previo" width="120" height="69"
-         style="display:block;border:0;height:auto;max-width:120px;">
+         style="display:block;border:0;width:120px;height:69px;">
   </td></tr>
 
   <!-- Hero -->
