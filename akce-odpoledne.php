@@ -103,6 +103,7 @@ require __DIR__ . '/inc-page-content.php';
     <title>Previo MeetUp | <?= htmlspecialchars($city) ?><?= htmlspecialchars($page_title_suffix) ?></title>
     <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <script src="https://www.google.com/recaptcha/api.js?render=YOUR_SITE_KEY" async defer></script>
 </head>
 <body>
@@ -110,6 +111,20 @@ require __DIR__ . '/inc-page-content.php';
     <?php require __DIR__ . '/inc-nav.php'; ?>
 
     <header class="hero">
+        <svg aria-hidden="true" style="position:absolute;top:0;right:0;margin-top:-80px;margin-right:-80px;width:24rem;height:24rem;opacity:0.1;pointer-events:none;z-index:1;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="100" cy="100" r="100" fill="#ffffff" />
+        </svg>
+        <svg aria-hidden="true" style="position:absolute;bottom:-40px;left:-40px;width:14rem;height:14rem;opacity:0.18;pointer-events:none;z-index:1;" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <pattern id="hero-dots-odpo" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+                    <circle cx="2" cy="2" r="2" fill="#ffffff" />
+                </pattern>
+            </defs>
+            <rect x="0" y="0" width="100" height="100" fill="url(#hero-dots-odpo)" />
+        </svg>
+        <svg aria-hidden="true" class="hero-blob" style="position:absolute;top:50%;right:25%;transform:translateY(-50%);width:16rem;height:16rem;pointer-events:none;z-index:1;" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path fill="rgba(239,68,68,0.55)" d="M42.7,-73.4C55.9,-67.8,67.6,-56.3,76.5,-42.6C85.4,-28.9,91.5,-12.9,89.5,2.4C87.5,17.7,77.5,32.2,65.8,43.8C54.1,55.4,40.8,64,26.1,70.1C11.4,76.2,-4.7,79.7,-21.3,78.2C-37.9,76.7,-55,70.1,-66.8,57.7C-78.6,45.3,-85.1,27.1,-86.3,8.7C-87.5,-9.7,-83.4,-28.3,-72.5,-43.3C-61.6,-58.3,-43.9,-69.7,-28.1,-73.8C-12.3,-77.9,1.6,-74.6,15.7,-73C29.8,-71.4,44.2,-71.4,42.7,-73.4Z" transform="translate(100 100)" />
+        </svg>
         <div class="hero-bg">
             <?php foreach ($hero_images as $index => $heroImg): ?>
                 <div class="slide <?= $index === 0 ? 'active' : '' ?>" style="background-image: url('<?= htmlspecialchars($heroImg) ?>');"></div>
@@ -247,6 +262,87 @@ require __DIR__ . '/inc-page-content.php';
         <?php endforeach; ?>
     </section>
 
+    <section class="reviews-section">
+        <div class="container reveal">
+            <span class="section-tag">Sociální důkaz</span>
+            <h2 class="section-title">Co říkají hoteliéři, kteří s námi už kávu pili</h2>
+            <p style="text-align:center; max-width:640px; margin:0 auto 50px; color:#4b5563;">
+                Přidejte se k více než 1&nbsp;500 spokojeným účastníkům našich roadshow.
+            </p>
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <article class="review-card">
+                            <div class="review-stars" aria-hidden="true">
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                            </div>
+                            <blockquote>
+                                Roadshow mi otevřela oči v tom, jak lépe pracovat s cenotvorbou a e-Turistou. Hned první měsíc po zavedení změn nám stouply přímé rezervace a ubyla administrativa.
+                            </blockquote>
+                            <div class="review-footer">
+                                <img src="https://i.pravatar.cc/150?img=1" alt="Avatar" class="review-avatar">
+                                <div class="review-author">
+                                    <strong>Jana Nováková</strong>
+                                    <span>Hotel Slunce</span>
+                                </div>
+                                <div class="review-logo">[LOGO]</div>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="review-card">
+                            <div class="review-stars" aria-hidden="true">
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                            </div>
+                            <blockquote>
+                                Nejvíce oceňuji praktické ukázky automatizace. Kiosky a chytré kliky teď řešíme na pár kliknutí a recepce má konečně čas se naplno věnovat hostům.
+                            </blockquote>
+                            <div class="review-footer">
+                                <img src="https://i.pravatar.cc/150?img=2" alt="Avatar" class="review-avatar">
+                                <div class="review-author">
+                                    <strong>Petr Dvořák</strong>
+                                    <span>Penzion U Lesa</span>
+                                </div>
+                                <div class="review-logo">[LOGO]</div>
+                            </div>
+                        </article>
+                    </div>
+                    <div class="swiper-slide">
+                        <article class="review-card">
+                            <div class="review-stars" aria-hidden="true">
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                                <svg viewBox="0 0 20 20" class="review-star"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.12 3.445a1 1 0 00.95.69h3.623c.969 0 1.371 1.24.588 1.81l-2.932 2.13a1 1 0 00-.364 1.118l1.12 3.445c.3.921-.755 1.688-1.538 1.118l-2.932-2.13a1 1 0 00-1.176 0l-2.932 2.13c-.783.57-1.838-.197-1.538-1.118l1.12-3.445a1 1 0 00-.364-1.118L2.718 8.872c-.783-.57-.38-1.81.588-1.81h3.623a1 1 0 00.95-.69l1.17-3.445z"/></svg>
+                            </div>
+                            <blockquote>
+                                Skvělá organizace, výborné kafe a hlavně kupa užitečných informací, které člověk hned využije v praxi. Určitě doporučuji všem majitelům a provozním.
+                            </blockquote>
+                            <div class="review-footer">
+                                <img src="https://i.pravatar.cc/150?img=3" alt="Avatar" class="review-avatar">
+                                <div class="review-author">
+                                    <strong>Martin Svoboda</strong>
+                                    <span>Apartmány Centrum</span>
+                                </div>
+                                <div class="review-logo">[LOGO]</div>
+                            </div>
+                        </article>
+                    </div>
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+    </section>
+
     <section id="registrace" class="reg-section">
         <div class="container reveal">
             <span class="section-tag" style="color: #6b7280;"><?= htmlspecialchars($reg_tag) ?></span>
@@ -267,18 +363,38 @@ require __DIR__ . '/inc-page-content.php';
                 <form id="regForm" action="process_registration.php" method="POST">
                     <div class="reg-form-grid">
                         <div class="location-field full-width">
-                            <select name="location" required>
-                                <?php if (count($stops) > 1): ?><option value="">— Vyberte termín —</option><?php endif; ?>
+                            <div class="location-options">
                                 <?php foreach ($stops as $stop):
                                     $parts = preg_split('/\s*[–\-]\s*/u', $stop['title'] ?? '', 2);
                                     $stopVenue = (count($parts) === 2 && trim($parts[1]) !== '') ? trim($parts[1]) : '';
                                     $isNearest = $nearest_stop && ($stop['city'] ?? '') === ($nearest_stop['city'] ?? '') && ($stop['date'] ?? '') === ($nearest_stop['date'] ?? '');
                                 ?>
-                                <option value="<?= htmlspecialchars($stop['city'] ?? '') ?>" <?= $isNearest ? 'selected' : '' ?>>
-                                    <?= htmlspecialchars($stop['date'] ?? '') ?> – <?= htmlspecialchars($stop['city'] ?? '') ?><?= $stopVenue ? ', ' . htmlspecialchars($stopVenue) : '' ?>
-                                </option>
+                                <label class="location-option">
+                                    <input
+                                        type="radio"
+                                        name="location"
+                                        value="<?= htmlspecialchars($stop['city'] ?? '') ?>"
+                                        <?= $isNearest ? 'checked' : '' ?>
+                                        required
+                                    >
+                                    <div class="location-option-inner">
+                                        <span class="location-option-icon" aria-hidden="true">
+                                            <svg viewBox="0 0 24 24" class="location-option-pin">
+                                                <path d="M12 2.75C8.83 2.75 6.25 5.33 6.25 8.5C6.25 12.8 11.21 19.33 11.67 19.93C11.86 20.18 12.14 20.18 12.33 19.93C12.79 19.33 17.75 12.8 17.75 8.5C17.75 5.33 15.17 2.75 12 2.75ZM12 11.25C10.62 11.25 9.5 10.13 9.5 8.75C9.5 7.37 10.62 6.25 12 6.25C13.38 6.25 14.5 7.37 14.5 8.75C14.5 10.13 13.38 11.25 12 11.25Z" />
+                                            </svg>
+                                        </span>
+                                        <div class="location-option-text">
+                                            <strong class="location-option-date">
+                                                <?= htmlspecialchars($stop['date'] ?? '') ?>
+                                            </strong>
+                                            <span class="location-option-city">
+                                                <?= htmlspecialchars($stop['city'] ?? '') ?><?= $stopVenue ? ', ' . htmlspecialchars($stopVenue) : '' ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </label>
                                 <?php endforeach; ?>
-                            </select>
+                            </div>
                         </div>
                         <input type="text" name="name" placeholder="Jméno a příjmení" required>
                         <input type="text" name="hotel" placeholder="Název ubytování" required>
@@ -286,7 +402,10 @@ require __DIR__ . '/inc-page-content.php';
                         <input type="tel" name="phone" placeholder="Telefon (pro SMS připomínku)">
                         <input type="hidden" name="type" value="<?= htmlspecialchars($fixed_type) ?>">
                         <textarea name="question" rows="3" placeholder="Vaše dotazy nebo témata, která chcete na akci řešit..." class="full-width"></textarea>
-                        <button type="submit" class="btn-main full-width" style="margin-top: 10px; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Odeslat závaznou registraci</button>
+                        <button type="submit" class="btn-main full-width" style="margin-top: 10px; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Zajistit si místo zdarma</button>
+                        <p class="reg-microcopy full-width">
+                            ⏱️ Zabere to 1 minutu. Žádné skryté poplatky, káva a vstup jsou na nás.
+                        </p>
                     </div>
                 </form>
             </div>
@@ -339,11 +458,35 @@ require __DIR__ . '/inc-page-content.php';
             </strong>
         </div>
         <div class="progress-box">
-            <span style="font-size: 0.9rem; font-weight: 600; color: #555;">Zbývá <?= $free_spots ?> míst</span>
-            <div class="progress-bg"><div class="progress-fill" style="width: <?= $percent ?>%;"></div></div>
+            <div>
+                <span style="font-size: 0.9rem; font-weight: 600; color: #555;">
+                    Zbývá <span class="pill-free-spots-number"><?= $free_spots ?></span> míst
+                </span>
+                <div class="pill-fomo-note">
+                    🔥 Minulá zastávka se vyprodala za 4 dny.
+                </div>
+            </div>
+            <div style="width: 110px; height: 8px; background: #e5e7eb; border-radius: 999px; overflow: hidden; display: flex; align-items: center; flex-shrink: 0;">
+                <div style="width: <?= $percent ?>%; height: 100%; background: var(--primary); border-radius: 999px; margin: 0; padding: 0;"></div>
+            </div>
             <a href="registrace.php<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main" style="padding: 12px 30px; font-size: 1rem; background: var(--primary); box-shadow: 0 10px 24px rgba(181, 0, 0, 0.24);">Zajistit místo</a>
         </div>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        const swiper = new Swiper('.mySwiper', {
+            loop: true,
+            autoplay: { delay: 5000, disableOnInteraction: false },
+            pagination: { el: '.swiper-pagination', clickable: true },
+            slidesPerView: 1,
+            spaceBetween: 30,
+            breakpoints: {
+                768: { slidesPerView: 2 },
+                1024: { slidesPerView: 3 }
+            }
+        });
+    </script>
 
     <script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
     <script>
@@ -500,16 +643,16 @@ require __DIR__ . '/inc-page-content.php';
         }
         function closeModal() { document.getElementById('successModal').style.display = 'none'; }
 
-        // Tlačítka "Zajistit místo" – pre-vyber město v selectu a scrollni na formulář
+        // Tlačítka "Zajistit místo" – pre-vyber město v radio tlačítkách a scrollni na formulář
         document.querySelectorAll('.stop-reg-btn[data-city]').forEach(function(btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
                 var city = this.dataset.city;
-                var select = document.querySelector('#regForm select[name="location"]');
-                if (select && city) {
-                    for (var i = 0; i < select.options.length; i++) {
-                        if (select.options[i].value === city) { select.selectedIndex = i; break; }
-                    }
+                var radios = document.querySelectorAll('#regForm input[type="radio"][name="location"]');
+                if (radios && city) {
+                    radios.forEach(function(radio) {
+                        radio.checked = (radio.value === city);
+                    });
                 }
                 var reg = document.getElementById('registrace');
                 if (reg) reg.scrollIntoView({ behavior: 'smooth', block: 'start' });

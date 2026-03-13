@@ -71,7 +71,7 @@ $speakers_title = $data['speakers_title'] ?? 'Experti s praxí v oboru';
 $speakers_default = [
     ['photo' => 'img/jiri-sindelar.jpeg', 'role' => 'Strategie & Trendy', 'name' => 'Jiří Šindelář', 'bio' => 'Head of Growth. Provází ranní částí. Jiří má přes 10 let praxe v digitalizaci ubytování.'],
     ['photo' => 'img/petr-mares.jpg', 'role' => 'Inovace & Automatizace', 'name' => 'Petr Mareš', 'bio' => 'Odpoledne prezentuje novinky. Vizionář v oblasti zámkových systémů a integrace AI.'],
-    ['photo' => 'img/jana-vlkova.jpg', 'role' => 'Konzultace & Workshopy', 'name' => 'Jana V.', 'bio' => 'K dispozici na odpolední individuální konzultace. Řeší konkrétní problémy v nastavení Previa.'],
+    ['photo' => 'img/jana-vlkova.jpg', 'role' => 'Konzultace & Workshopy', 'name' => 'Jana [Příjmení]', 'bio' => 'K dispozici na odpolední individuální konzultace. Řeší konkrétní problémy v nastavení Previa.'],
 ];
 $speakers = (!empty($data['speakers']) && is_array($data['speakers'])) ? $data['speakers'] : $speakers_default;
 

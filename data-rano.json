@@ -5,7 +5,7 @@
   "venue": "Pytloun Grand Hotel Imperial",
   "capacity": 70,
   "registered": 10,
-  "promo_title": "Jarní roadshow: Název",
+  "promo_title": "Jarní roadshow",
   "promo_text": "Přicházíme do vašeho regionu. Legislativní novinky, práce s cenou a technologie, které vám uvolní ruce.",
   "hero_title": "",
   "hero_text": "",
@@ -160,12 +160,12 @@
       "photo": "img/petr-mares.jpg",
       "role": "Inovace & Automatizace",
       "name": "Petr Mareš",
-      "bio": "Odpoledne prezentuje novinky. Vizioář v oblasti zámkových systémů a integrace AI."
+      "bio": "Odpoledne prezentuje novinky. Vizionář v oblasti zámkových systémů a integrace AI."
     },
     {
       "photo": "img/jana-vlkova.jpg",
       "role": "Konzultace & Workshopy",
-      "name": "Jana V.",
+      "name": "Jana [Příjmení]",
       "bio": "K dispozici na odpolednní individuální konzultace. Řeší konkrétní problémy v nastavení Previa."
     }
   ],
