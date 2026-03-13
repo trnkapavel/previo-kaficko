@@ -13,6 +13,9 @@
 $switch_url_rano      = $switch_url_rano      ?? 'admin-rano.php';
 $switch_url_odpoledne = $switch_url_odpoledne ?? 'admin-odpoledne.php';
 
+// Absolutní cesta k datovému souboru – relativní cesta selhává na některých serverech
+$data_file = __DIR__ . '/' . ltrim($data_file, '/');
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
@@ -141,58 +144,57 @@ if (!isset($data)) {
     if (!$data) $data = [];
 }
 
+// ── Helper: uložit data a přesměrovat ────────────────────────────────────────
+
+function saveAndRedirect(array $data, string $data_file, string $url): void {
+    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+    if ($json === false || file_put_contents($data_file, $json, LOCK_EX) === false) {
+        // Zápis selhal – zobraz chybu místo přesměrování
+        session_write_close();
+        die('<div style="font-family:sans-serif;padding:30px;background:#fff0f0;color:#7f1d1d;border:1px solid #fca5a5;border-radius:8px;margin:20px;">'
+          . '<strong>❌ Chyba zápisu</strong><br>'
+          . 'Nepodařilo se uložit soubor <code>' . htmlspecialchars($data_file) . '</code>.<br>'
+          . 'Zkontroluj oprávnění k zápisu (chmod 664) na serveru.<br><br>'
+          . '<a href="' . htmlspecialchars($url) . '">← Zpět</a></div>');
+    }
+    header('Location: ' . $url);
+    exit;
+}
+
 // ── GET akce: přidat / odebrat zastávku ───────────────────────────────────────
 
 if (isset($_SESSION['logged_in']) && isset($_GET['add_stop'])) {
-    $data['stops'][] = ['date' => '', 'time_from' => '', 'time_to' => '', 'title' => '', 'badges' => [], 'description' => ''];
-    file_put_contents($data_file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    header('Location: ' . $admin_url . '#section-stops');
-    exit;
+    $data['stops'][] = ['city' => '', 'date' => '', 'time_from' => '', 'time_to' => '', 'title' => '', 'badges' => [], 'description' => ''];
+    saveAndRedirect($data, $data_file, $admin_url . '#section-stops');
 }
 if (isset($_SESSION['logged_in']) && isset($_GET['remove_stop']) && is_numeric($_GET['remove_stop'])) {
     $i = (int)$_GET['remove_stop'];
-    if (isset($data['stops'][$i])) {
-        array_splice($data['stops'], $i, 1);
-        file_put_contents($data_file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    }
-    header('Location: ' . $admin_url . '#section-stops');
-    exit;
+    if (isset($data['stops'][$i])) array_splice($data['stops'], $i, 1);
+    saveAndRedirect($data, $data_file, $admin_url . '#section-stops');
 }
 
 // ── GET akce: přidat / odebrat řečníka ───────────────────────────────────────
 
 if (isset($_SESSION['logged_in']) && isset($_GET['add_speaker'])) {
     $data['speakers'][] = ['photo' => '', 'role' => '', 'name' => '', 'bio' => ''];
-    file_put_contents($data_file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    header('Location: ' . $admin_url . '#section-speakers');
-    exit;
+    saveAndRedirect($data, $data_file, $admin_url . '#section-speakers');
 }
 if (isset($_SESSION['logged_in']) && isset($_GET['remove_speaker']) && is_numeric($_GET['remove_speaker'])) {
     $i = (int)$_GET['remove_speaker'];
-    if (isset($data['speakers'][$i])) {
-        array_splice($data['speakers'], $i, 1);
-        file_put_contents($data_file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    }
-    header('Location: ' . $admin_url . '#section-speakers');
-    exit;
+    if (isset($data['speakers'][$i])) array_splice($data['speakers'], $i, 1);
+    saveAndRedirect($data, $data_file, $admin_url . '#section-speakers');
 }
 
 // ── GET akce: přidat / odebrat proběhlou akci ────────────────────────────────
 
 if (isset($_SESSION['logged_in']) && isset($_GET['add_past'])) {
     $data['past_events'][] = ['image' => '', 'date' => '', 'place' => ''];
-    file_put_contents($data_file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    header('Location: ' . $admin_url . '#section-past');
-    exit;
+    saveAndRedirect($data, $data_file, $admin_url . '#section-past');
 }
 if (isset($_SESSION['logged_in']) && isset($_GET['remove_past']) && is_numeric($_GET['remove_past'])) {
     $i = (int)$_GET['remove_past'];
-    if (isset($data['past_events'][$i])) {
-        array_splice($data['past_events'], $i, 1);
-        file_put_contents($data_file, json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-    }
-    header('Location: ' . $admin_url . '#section-past');
-    exit;
+    if (isset($data['past_events'][$i])) array_splice($data['past_events'], $i, 1);
+    saveAndRedirect($data, $data_file, $admin_url . '#section-past');
 }
 
 // ── POST: uložení dat ─────────────────────────────────────────────────────────
