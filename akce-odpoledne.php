@@ -487,49 +487,61 @@ require __DIR__ . '/inc-page-content.php';
         }
         function closeModal() { document.getElementById('successModal').style.display = 'none'; }
 
-        // Newsletter
-        var nlForm = document.getElementById('newsletterForm');
-        if (nlForm) {
+        // Newsletter – musí být v DOMContentLoaded, formulář je až za tímto scriptem
+        document.addEventListener('DOMContentLoaded', function() {
+            var nlForm = document.getElementById('newsletterForm');
+            if (!nlForm) return;
             nlForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                var btn = nlForm.querySelector('button[type="submit"]');
-                var msg = document.getElementById('newsletterMsg');
+                var btn    = nlForm.querySelector('button[type="submit"]');
+                var errEl  = document.getElementById('newsletterError');
+                var wrap   = document.getElementById('newsletterWrap');
+                var success = document.getElementById('newsletterSuccess');
                 btn.disabled = true;
                 btn.textContent = 'Odesílám…';
+                errEl.style.display = 'none';
                 fetch('process_newsletter.php', { method: 'POST', body: new FormData(nlForm) })
                     .then(function(r) { return r.json(); })
                     .then(function(data) {
-                        msg.style.display = 'block';
                         if (data.success) {
-                            msg.style.color = '#fff';
-                            msg.textContent = data.message || 'Přihlášení proběhlo úspěšně!';
-                            nlForm.style.display = 'none';
+                            wrap.style.display = 'none';
+                            success.style.display = 'block';
                         } else {
-                            msg.style.color = '#ffd5d5';
-                            msg.textContent = data.message || 'Něco se nepovedlo. Zkuste to znovu.';
+                            errEl.textContent = data.message || 'Něco se nepovedlo. Zkuste to znovu.';
+                            errEl.style.display = 'block';
                             btn.disabled = false;
                             btn.textContent = 'Přihlásit odběr';
                         }
                     })
                     .catch(function() {
-                        msg.style.display = 'block';
-                        msg.style.color = '#ffd5d5';
-                        msg.textContent = 'Chyba připojení. Zkuste to znovu.';
+                        errEl.textContent = 'Chyba připojení. Zkuste to znovu.';
+                        errEl.style.display = 'block';
                         btn.disabled = false;
                         btn.textContent = 'Přihlásit odběr';
                     });
             });
-        }
+        });
     </script>
 
     <div class="newsletter-section">
         <div class="container reveal">
             <h2 style="font-family: 'Source Sans 3'; font-size: 2.5rem; margin-bottom: 20px;">Chcete dostávat novinky z oboru?</h2>
-            <form class="newsletter-form" id="newsletterForm">
-                <input type="email" name="email" placeholder="Váš e-mail" class="newsletter-input" required>
-                <button type="submit" class="btn-dark">Přihlásit odběr</button>
-            </form>
-            <p id="newsletterMsg" style="margin-top:16px;font-size:1rem;display:none;"></p>
+            <div id="newsletterWrap">
+                <form class="newsletter-form" id="newsletterForm">
+                    <input type="email" name="email" placeholder="Váš e-mail" class="newsletter-input" required>
+                    <button type="submit" class="btn-dark">Přihlásit odběr</button>
+                </form>
+                <p id="newsletterError" style="margin-top:14px;font-size:0.95rem;color:#ffd5d5;display:none;"></p>
+            </div>
+            <div id="newsletterSuccess" style="display:none;margin-top:24px;">
+                <div style="display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.15);font-size:26px;margin-bottom:16px;">✓</div>
+                <h3 style="font-size:1.4rem;color:#fff;margin-bottom:10px;">Téměř hotovo!</h3>
+                <p style="font-size:1rem;color:rgba(255,255,255,0.85);max-width:420px;margin:0 auto;line-height:1.6;">
+                    Poslali jsme vám e-mail s potvrzovacím odkazem.<br>
+                    Kliknutím na odkaz v e-mailu odběr aktivujete.
+                </p>
+                <p style="font-size:0.85rem;color:rgba(255,255,255,0.55);margin-top:10px;">Zkontrolujte i složku se spamem.</p>
+            </div>
         </div>
     </div>
 

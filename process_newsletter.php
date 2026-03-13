@@ -159,51 +159,71 @@ function sendConfirmLink(string $email, string $token, string $baseUrl, array $c
     $html = <<<HTML
 <!DOCTYPE html>
 <html lang="cs">
-<head><meta charset="UTF-8"><title>Potvrďte odběr novinek</title></head>
-<body style="margin:0;padding:0;background:#f5f5f5;font-family:Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f5f5;padding:40px 0;">
-  <tr><td align="center">
-    <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:12px;overflow:hidden;max-width:600px;">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Potvrďte odběr novinek – Previo</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:40px 16px;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
 
-      <!-- Header -->
-      <tr><td style="background:#b50000;padding:32px 40px;text-align:center;">
-        <p style="color:#ffffff;font-size:13px;letter-spacing:2px;text-transform:uppercase;margin:0 0 8px;">Previo MeetUp</p>
-        <h1 style="color:#ffffff;font-size:24px;margin:0;font-weight:700;">Potvrďte odběr novinek</h1>
-      </td></tr>
-
-      <!-- Body -->
-      <tr><td style="padding:40px;">
-        <p style="font-size:16px;color:#374151;line-height:1.6;">Ahoj,</p>
-        <p style="font-size:16px;color:#374151;line-height:1.6;">
-          obdrželi jsme žádost o přihlášení adresy <strong>{$eEmail}</strong>
-          k odběru novinek z hotelového světa od Previo.
-        </p>
-        <p style="font-size:16px;color:#374151;line-height:1.6;">
-          Kliknutím na tlačítko níže odběr potvrdíte. Odkaz je platný <strong>48 hodin</strong>.
-        </p>
-        <p style="text-align:center;margin:32px 0;">
-          <a href="{$eUrl}"
-             style="display:inline-block;background:#b50000;color:#ffffff;text-decoration:none;
-                    font-size:16px;font-weight:700;padding:16px 36px;border-radius:50px;">
-            Potvrdit odběr novinek
-          </a>
-        </p>
-        <p style="font-size:13px;color:#9ca3af;line-height:1.5;">
-          Pokud jste se k odběru nepřihlásili, tento e-mail ignorujte.<br>
-          Odkaz pro kopírování: {$eUrl}
-        </p>
-      </td></tr>
-
-      <!-- Footer -->
-      <tr><td style="background:#f9fafb;padding:24px 40px;border-top:1px solid #e5e7eb;text-align:center;">
-        <p style="font-size:12px;color:#9ca3af;margin:0;">
-          PREVIO s.r.o. · Milady Horákové 13, 602 00 Brno<br>
-          <a href="https://www.previo.cz" style="color:#b50000;text-decoration:none;">www.previo.cz</a>
-        </p>
-      </td></tr>
-
-    </table>
+  <!-- Logo -->
+  <tr><td style="padding:28px 40px 20px;border-bottom:1px solid #f0f0f0;">
+    <img src="https://www.trnka.website/kaficko/img/logo-previo.png"
+         alt="Previo" width="120" height="69"
+         style="display:block;border:0;height:auto;max-width:120px;">
   </td></tr>
+
+  <!-- Hero pruh -->
+  <tr><td style="background:linear-gradient(135deg,#b50000 0%,#8b0000 100%);padding:36px 40px;text-align:center;">
+    <p style="color:rgba(255,255,255,0.75);font-size:12px;letter-spacing:3px;text-transform:uppercase;margin:0 0 10px 0;font-weight:600;">Previo MeetUp · Newsletter</p>
+    <h1 style="color:#ffffff;font-size:26px;font-weight:800;margin:0;line-height:1.3;">Potvrďte odběr novinek</h1>
+  </td></tr>
+
+  <!-- Tělo -->
+  <tr><td style="padding:40px 40px 32px;">
+    <p style="font-size:16px;color:#374151;line-height:1.7;margin:0 0 16px;">Ahoj,</p>
+    <p style="font-size:16px;color:#374151;line-height:1.7;margin:0 0 16px;">
+      obdrželi jsme žádost o přihlášení adresy <strong style="color:#111827;">{$eEmail}</strong>
+      k odběru novinek z hotelového světa.
+    </p>
+    <p style="font-size:16px;color:#374151;line-height:1.7;margin:0 0 32px;">
+      Kliknutím na tlačítko níže odběr potvrdíte.<br>
+      <span style="font-size:14px;color:#9ca3af;">Odkaz je platný 48 hodin.</span>
+    </p>
+
+    <!-- CTA tlačítko -->
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr><td align="center" style="padding-bottom:32px;">
+        <a href="{$eUrl}"
+           style="display:inline-block;background:#b50000;color:#ffffff;text-decoration:none;
+                  font-size:16px;font-weight:700;padding:16px 40px;border-radius:50px;
+                  letter-spacing:0.3px;">
+          Potvrdit odběr novinek →
+        </a>
+      </td></tr>
+    </table>
+
+    <hr style="border:none;border-top:1px solid #f0f0f0;margin:0 0 24px;">
+    <p style="font-size:13px;color:#9ca3af;line-height:1.6;margin:0;">
+      Pokud jste se k odběru nepřihlásili, tento e-mail ignorujte — nic se nestane.<br>
+      Tlačítko nefunguje? Zkopírujte odkaz do prohlížeče:<br>
+      <span style="color:#b50000;word-break:break-all;">{$eUrl}</span>
+    </p>
+  </td></tr>
+
+  <!-- Patička -->
+  <tr><td style="background:#f9fafb;padding:20px 40px;border-top:1px solid #f0f0f0;text-align:center;">
+    <p style="font-size:12px;color:#9ca3af;margin:0;line-height:1.8;">
+      PREVIO s.r.o. · Milady Horákové 13, 602 00 Brno<br>
+      <a href="https://www.previo.cz" style="color:#b50000;text-decoration:none;">www.previo.cz</a>
+    </p>
+  </td></tr>
+
+</table>
+</td></tr>
 </table>
 </body>
 </html>
