@@ -409,7 +409,8 @@ if (!isset($data) || !$data) {
         .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 10px; }
         .btn-add { display: inline-block; background: var(--color-primary); color: white; padding: 8px 16px;
             border-radius: 999px; text-decoration: none; font-weight: 600; font-size: 0.9rem; }
-        .btn-remove { background: none !important; color: var(--color-primary) !important; font-size: 0.9rem !important; font-weight: 400 !important; padding: 0 !important; width: auto !important; margin: 0 !important; box-shadow: none !important; border: none !important; text-decoration: none; cursor: pointer; }
+        .btn-remove { background: #fff !important; color: var(--color-primary) !important; font-size: 1rem; font-weight: 700; padding: 15px 30px; width: auto !important; margin: 0; box-shadow: 0 10px 20px rgba(0,0,0,0.13) !important; border: none; border-radius: var(--radius-pill); cursor: pointer; transition: all 0.25s ease; }
+        .btn-remove:hover { background: #fff !important; color: var(--color-primary) !important; box-shadow: 0 14px 26px rgba(0,0,0,0.22) !important; transform: translateY(-1px); }
         .inner-card { margin-top: 16px; padding: 16px; background: #fff; border: 1px solid var(--color-border); border-radius: 12px; }
         .inner-card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         @media (max-width: 768px) { body { padding: 20px; } .container { padding: 24px; } .row-2 { grid-template-columns: 1fr; } }
