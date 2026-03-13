@@ -239,6 +239,7 @@ if (isset($_POST['save']) && isset($_SESSION['logged_in'])) {
             $badgesStr  = trim($_POST['stops_badges'][$i] ?? '');
             $badges     = array_values(array_filter(array_map('trim', preg_split('/[\s,]+/', $badgesStr))));
             $stopsSaved[] = [
+                'city'        => trim($_POST['stops_city'][$i] ?? ''),
                 'date'        => trim($d),
                 'time_from'   => trim($_POST['stops_time_from'][$i] ?? ''),
                 'time_to'     => trim($_POST['stops_time_to'][$i] ?? ''),
@@ -592,10 +593,11 @@ if (!isset($data) || !$data) {
                         <a href="<?= htmlspecialchars($admin_url) ?>?remove_stop=<?= $idx ?>" class="btn-remove" onclick="return confirm('Odebrat zastávku?');">Smazat</a>
                     </div>
                     <div class="row-2">
-                        <div><label>Datum</label><input type="text" name="stops_date[]" value="<?= htmlspecialchars($stop['date'] ?? '') ?>"></div>
-                        <div><label>Čas od</label><input type="text" name="stops_time_from[]" value="<?= htmlspecialchars($stop['time_from'] ?? '') ?>"></div>
-                        <div><label>Čas do</label><input type="text" name="stops_time_to[]" value="<?= htmlspecialchars($stop['time_to'] ?? '') ?>"></div>
-                        <div><label>Nadpis</label><input type="text" name="stops_title[]" value="<?= htmlspecialchars($stop['title'] ?? '') ?>"></div>
+                        <div><label>Město</label><input type="text" name="stops_city[]" value="<?= htmlspecialchars($stop['city'] ?? '') ?>" placeholder="Praha"></div>
+                        <div><label>Datum</label><input type="text" name="stops_date[]" value="<?= htmlspecialchars($stop['date'] ?? '') ?>" placeholder="25. března 2026"></div>
+                        <div><label>Čas od</label><input type="text" name="stops_time_from[]" value="<?= htmlspecialchars($stop['time_from'] ?? '') ?>" placeholder="09:00"></div>
+                        <div><label>Čas do</label><input type="text" name="stops_time_to[]" value="<?= htmlspecialchars($stop['time_to'] ?? '') ?>" placeholder="12:00"></div>
+                        <div class="row-2" style="grid-column:1/-1;"><div><label>Název místa</label><input type="text" name="stops_title[]" value="<?= htmlspecialchars($stop['title'] ?? '') ?>" placeholder="Praha – Hotel XY"></div></div>
                     </div>
                     <label>Badge (oddělené čárkou)</label>
                     <input type="text" name="stops_badges[]" value="<?= htmlspecialchars($badgesStr) ?>">
@@ -612,24 +614,36 @@ if (!isset($data) || !$data) {
                     <div><label>Tag sekce</label><input type="text" name="speakers_tag" value="<?= htmlspecialchars($data['speakers_tag'] ?? 'Řečníci') ?>"></div>
                     <div><label>Nadpis sekce</label><input type="text" name="speakers_title" value="<?= htmlspecialchars($data['speakers_title'] ?? 'Experti s praxí v oboru') ?>"></div>
                 </div>
+                <?php if (empty($data['speakers'])): ?>
+                <p class="hint" style="margin-top:14px;">⚠️ Žádní řečníci nejsou přidáni – web zobrazuje výchozí obsah. Přidejte řečníky tlačítkem níže.</p>
+                <?php endif; ?>
                 <p style="margin-top:16px;"><a href="<?= htmlspecialchars($admin_url) ?>?add_speaker=1" class="btn-add">+ Přidat řečníka</a></p>
                 <?php foreach ($data['speakers'] ?? [] as $idx => $sp): ?>
                 <div class="inner-card">
                     <div class="inner-card-header">
-                        <strong>Řečník <?= $idx+1 ?></strong>
+                        <strong>Řečník <?= $idx+1 ?><?= !empty($sp['name']) ? ' – ' . htmlspecialchars($sp['name']) : '' ?></strong>
                         <a href="<?= htmlspecialchars($admin_url) ?>?remove_speaker=<?= $idx ?>" class="btn-remove" onclick="return confirm('Odebrat řečníka?');">Smazat</a>
                     </div>
                     <input type="hidden" name="speakers_index[]" value="<?= $idx ?>">
                     <div class="row-2">
-                        <div><label>Role</label><input type="text" name="speakers_role[]" value="<?= htmlspecialchars($sp['role'] ?? '') ?>"></div>
-                        <div><label>Jméno</label><input type="text" name="speakers_name[]" value="<?= htmlspecialchars($sp['name'] ?? '') ?>"></div>
+                        <div>
+                            <label>Jméno řečníka</label>
+                            <input type="text" name="speakers_name[]" value="<?= htmlspecialchars($sp['name'] ?? '') ?>" placeholder="Jan Novák">
+                        </div>
+                        <div>
+                            <label>Nadpis karty (zaměření)</label>
+                            <input type="text" name="speakers_role[]" value="<?= htmlspecialchars($sp['role'] ?? '') ?>" placeholder="Strategie & Trendy">
+                        </div>
                     </div>
-                    <label>Bio</label>
-                    <textarea name="speakers_bio[]" rows="2"><?= htmlspecialchars($sp['bio'] ?? '') ?></textarea>
-                    <label>Foto (upload nebo nechte prázdné)</label>
+                    <label>Na co se zaměřuje (popis)</label>
+                    <textarea name="speakers_bio[]" rows="3" placeholder="Krátký popis řečníka a jeho specializace..."><?= htmlspecialchars($sp['bio'] ?? '') ?></textarea>
+                    <label>Foto řečníka</label>
                     <input type="file" name="speakers_photo[]" accept="image/*">
                     <?php if (!empty($sp['photo'])): ?>
-                        <p class="hint">Aktuální: <img src="<?= htmlspecialchars($sp['photo']) ?>" alt="" style="max-width:80px;height:80px;object-fit:cover;border-radius:8px;"></p>
+                        <div style="margin-top:8px;display:flex;align-items:center;gap:10px;">
+                            <img src="<?= htmlspecialchars($sp['photo']) ?>" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:2px solid #e5e7eb;">
+                            <span style="font-size:0.85rem;color:#6b7280;"><?= htmlspecialchars($sp['photo']) ?></span>
+                        </div>
                     <?php endif; ?>
                 </div>
                 <?php endforeach; ?>
