@@ -144,57 +144,43 @@ if (!isset($data)) {
     if (!$data) $data = [];
 }
 
-// ── Helper: uložit data a přesměrovat ────────────────────────────────────────
+// ── Helper: uložit JSON ───────────────────────────────────────────────────────
 
-function saveAndRedirect(array $data, string $data_file, string $url): void {
+function saveData(array $data, string $data_file): bool {
     $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
-    if ($json === false || file_put_contents($data_file, $json, LOCK_EX) === false) {
-        // Zápis selhal – zobraz chybu místo přesměrování
-        session_write_close();
-        die('<div style="font-family:sans-serif;padding:30px;background:#fff0f0;color:#7f1d1d;border:1px solid #fca5a5;border-radius:8px;margin:20px;">'
-          . '<strong>❌ Chyba zápisu</strong><br>'
-          . 'Nepodařilo se uložit soubor <code>' . htmlspecialchars($data_file) . '</code>.<br>'
-          . 'Zkontroluj oprávnění k zápisu (chmod 664) na serveru.<br><br>'
-          . '<a href="' . htmlspecialchars($url) . '">← Zpět</a></div>');
+    return $json !== false && file_put_contents($data_file, $json, LOCK_EX) !== false;
+}
+
+// ── POST quick-actions (add / remove) ────────────────────────────────────────
+// Tlačítka jsou POST formy (ne GET linky) – spolehlivější, bez problémů s anchor
+
+if (isset($_SESSION['logged_in']) && isset($_POST['quick_action'])) {
+    $qa = $_POST['quick_action'];
+
+    if ($qa === 'add_stop') {
+        $data['stops'][] = ['city' => '', 'date' => '', 'time_from' => '', 'time_to' => '', 'title' => '', 'badges' => [], 'description' => ''];
+    } elseif ($qa === 'remove_stop' && isset($_POST['idx']) && is_numeric($_POST['idx'])) {
+        $i = (int)$_POST['idx'];
+        if (isset($data['stops'][$i])) array_splice($data['stops'], $i, 1);
+    } elseif ($qa === 'add_speaker') {
+        $data['speakers'][] = ['photo' => '', 'role' => '', 'name' => '', 'bio' => ''];
+    } elseif ($qa === 'remove_speaker' && isset($_POST['idx']) && is_numeric($_POST['idx'])) {
+        $i = (int)$_POST['idx'];
+        if (isset($data['speakers'][$i])) array_splice($data['speakers'], $i, 1);
+    } elseif ($qa === 'add_past') {
+        $data['past_events'][] = ['image' => '', 'date' => '', 'place' => ''];
+    } elseif ($qa === 'remove_past' && isset($_POST['idx']) && is_numeric($_POST['idx'])) {
+        $i = (int)$_POST['idx'];
+        if (isset($data['past_events'][$i])) array_splice($data['past_events'], $i, 1);
     }
-    header('Location: ' . $url);
-    exit;
-}
 
-// ── GET akce: přidat / odebrat zastávku ───────────────────────────────────────
-
-if (isset($_SESSION['logged_in']) && isset($_GET['add_stop'])) {
-    $data['stops'][] = ['city' => '', 'date' => '', 'time_from' => '', 'time_to' => '', 'title' => '', 'badges' => [], 'description' => ''];
-    saveAndRedirect($data, $data_file, $admin_url . '#section-stops');
-}
-if (isset($_SESSION['logged_in']) && isset($_GET['remove_stop']) && is_numeric($_GET['remove_stop'])) {
-    $i = (int)$_GET['remove_stop'];
-    if (isset($data['stops'][$i])) array_splice($data['stops'], $i, 1);
-    saveAndRedirect($data, $data_file, $admin_url . '#section-stops');
-}
-
-// ── GET akce: přidat / odebrat řečníka ───────────────────────────────────────
-
-if (isset($_SESSION['logged_in']) && isset($_GET['add_speaker'])) {
-    $data['speakers'][] = ['photo' => '', 'role' => '', 'name' => '', 'bio' => ''];
-    saveAndRedirect($data, $data_file, $admin_url . '#section-speakers');
-}
-if (isset($_SESSION['logged_in']) && isset($_GET['remove_speaker']) && is_numeric($_GET['remove_speaker'])) {
-    $i = (int)$_GET['remove_speaker'];
-    if (isset($data['speakers'][$i])) array_splice($data['speakers'], $i, 1);
-    saveAndRedirect($data, $data_file, $admin_url . '#section-speakers');
-}
-
-// ── GET akce: přidat / odebrat proběhlou akci ────────────────────────────────
-
-if (isset($_SESSION['logged_in']) && isset($_GET['add_past'])) {
-    $data['past_events'][] = ['image' => '', 'date' => '', 'place' => ''];
-    saveAndRedirect($data, $data_file, $admin_url . '#section-past');
-}
-if (isset($_SESSION['logged_in']) && isset($_GET['remove_past']) && is_numeric($_GET['remove_past'])) {
-    $i = (int)$_GET['remove_past'];
-    if (isset($data['past_events'][$i])) array_splice($data['past_events'], $i, 1);
-    saveAndRedirect($data, $data_file, $admin_url . '#section-past');
+    if (saveData($data, $data_file)) {
+        $success = '✅ Uloženo.';
+    } else {
+        $error = '❌ Nepodařilo se zapsat soubor <code>' . htmlspecialchars($data_file) . '</code>. Zkontroluj oprávnění (chmod 664).';
+    }
+    // Znovu načti data ze souboru
+    $data = json_decode(file_get_contents($data_file), true) ?: $data;
 }
 
 // ── POST: uložení dat ─────────────────────────────────────────────────────────
@@ -586,13 +572,20 @@ if (!isset($data) || !$data) {
             <div class="section-card" id="section-stops">
                 <h3>📍 Příští zastávky</h3>
                 <p class="hint">Úpravy zastávek uložte tlačítkem „Uložit" níže.</p>
-                <p><a href="<?= htmlspecialchars($admin_url) ?>?add_stop=1" class="btn-add">+ Přidat zastávku</a></p>
+                <form method="POST" style="display:inline;">
+                    <input type="hidden" name="quick_action" value="add_stop">
+                    <button type="submit" class="btn-add" style="border:none;cursor:pointer;">+ Přidat zastávku</button>
+                </form>
                 <?php foreach ($data['stops'] ?? [] as $idx => $stop):
                     $badgesStr = is_array($stop['badges'] ?? []) ? implode(', ', $stop['badges']) : ''; ?>
                 <div class="inner-card">
                     <div class="inner-card-header">
                         <strong>Zastávka <?= $idx+1 ?></strong>
-                        <a href="<?= htmlspecialchars($admin_url) ?>?remove_stop=<?= $idx ?>" class="btn-remove" onclick="return confirm('Odebrat zastávku?');">Smazat</a>
+                        <form method="POST" style="display:inline;" onsubmit="return confirm('Odebrat zastávku?');">
+                            <input type="hidden" name="quick_action" value="remove_stop">
+                            <input type="hidden" name="idx" value="<?= $idx ?>">
+                            <button type="submit" class="btn-remove" style="background:none;border:none;cursor:pointer;">Smazat</button>
+                        </form>
                     </div>
                     <div class="row-2">
                         <div><label>Město</label><input type="text" name="stops_city[]" value="<?= htmlspecialchars($stop['city'] ?? '') ?>" placeholder="Praha"></div>
@@ -619,12 +612,19 @@ if (!isset($data) || !$data) {
                 <?php if (empty($data['speakers'])): ?>
                 <p class="hint" style="margin-top:14px;">⚠️ Žádní řečníci nejsou přidáni – web zobrazuje výchozí obsah. Přidejte řečníky tlačítkem níže.</p>
                 <?php endif; ?>
-                <p style="margin-top:16px;"><a href="<?= htmlspecialchars($admin_url) ?>?add_speaker=1" class="btn-add">+ Přidat řečníka</a></p>
+                <form method="POST" style="margin-top:16px;display:inline;">
+                    <input type="hidden" name="quick_action" value="add_speaker">
+                    <button type="submit" class="btn-add" style="border:none;cursor:pointer;">+ Přidat řečníka</button>
+                </form>
                 <?php foreach ($data['speakers'] ?? [] as $idx => $sp): ?>
                 <div class="inner-card">
                     <div class="inner-card-header">
                         <strong>Řečník <?= $idx+1 ?><?= !empty($sp['name']) ? ' – ' . htmlspecialchars($sp['name']) : '' ?></strong>
-                        <a href="<?= htmlspecialchars($admin_url) ?>?remove_speaker=<?= $idx ?>" class="btn-remove" onclick="return confirm('Odebrat řečníka?');">Smazat</a>
+                        <form method="POST" style="display:inline;" onsubmit="return confirm('Odebrat řečníka?');">
+                            <input type="hidden" name="quick_action" value="remove_speaker">
+                            <input type="hidden" name="idx" value="<?= $idx ?>">
+                            <button type="submit" class="btn-remove" style="background:none;border:none;cursor:pointer;">Smazat</button>
+                        </form>
                     </div>
                     <input type="hidden" name="speakers_index[]" value="<?= $idx ?>">
                     <div class="row-2">
@@ -697,7 +697,10 @@ if (!isset($data) || !$data) {
             <div class="section-card" id="section-past">
                 <h3>📅 Proběhlé akce</h3>
                 <p class="hint">Karty se zobrazí v sekci historie na stránce akce.</p>
-                <p><a href="<?= htmlspecialchars($admin_url) ?>?add_past=1" class="btn-add">+ Přidat proběhlou akci</a></p>
+                <form method="POST" style="display:inline;">
+                    <input type="hidden" name="quick_action" value="add_past">
+                    <button type="submit" class="btn-add" style="border:none;cursor:pointer;">+ Přidat proběhlou akci</button>
+                </form>
                 <?php foreach ($data['past_events'] ?? [] as $pi => $pe):
                     $peImg = $pe['image'] ?? '';
                     if ($peImg && strpos($peImg, 'img/') !== 0 && strpos($peImg, '/') === false) $peImg = 'img/' . $peImg;
@@ -705,7 +708,11 @@ if (!isset($data) || !$data) {
                 <div class="inner-card">
                     <div class="inner-card-header">
                         <strong>Akce <?= $pi+1 ?></strong>
-                        <a href="<?= htmlspecialchars($admin_url) ?>?remove_past=<?= $pi ?>" class="btn-remove" onclick="return confirm('Smazat proběhlou akci?');">Smazat</a>
+                        <form method="POST" style="display:inline;" onsubmit="return confirm('Smazat proběhlou akci?');">
+                            <input type="hidden" name="quick_action" value="remove_past">
+                            <input type="hidden" name="idx" value="<?= $pi ?>">
+                            <button type="submit" class="btn-remove" style="background:none;border:none;cursor:pointer;">Smazat</button>
+                        </form>
                     </div>
                     <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;">
                         <?php if ($peImg): ?>
