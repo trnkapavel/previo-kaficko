@@ -1,15 +1,19 @@
 <?php
-// Stránka pro registraci – používá stejnou šablonu jako landing
-$landing_config = [
-    'variant' => 'registration',
-    'page_title_suffix' => ' | Registrace',
-];
+// Stránka pro registraci – přesměruje na správnou landing stránku
+// a posune návštěvníka na sekci #registrace.
 
 // Předvyplnění slotu (ranní/odpolední) pro výběr typu účasti
 $prefill_slot = isset($_GET['slot']) ? $_GET['slot'] : null;
 
-// Indikace, že se má po načtení stránky přesunout na sekci registrace
+// Indikace pro landing šablonu, že se má po načtení srolovat na sekci registrace
 $scroll_to_registration = true;
 
-include __DIR__ . '/index.php';
+// Podle slotu zvolíme dopolední / odpolední landing
+if ($prefill_slot === 'afternoon') {
+    include __DIR__ . '/akce-odpoledne.php';
+} else {
+    // default = ranní varianta
+    include __DIR__ . '/akce-rano.php';
+}
 
+?>

@@ -74,5 +74,13 @@
             "title": "Workshopy",
             "desc": "Individuální konzultace s experty na nastavení systému."
         }
+    ],
+    "history_section_title": "Proběhlé akce",
+    "past_events_morning": [
+        { "image": "img/cover1.jpg", "date": "15. 1. 2025", "place": "Praha" },
+        { "image": "img/cover2.jpg", "date": "22. 2. 2025", "place": "Brno" }
+    ],
+    "past_events_afternoon": [
+        { "image": "img/cover1.jpg", "date": "15. 1. 2025", "place": "Praha" }
     ]
 }
