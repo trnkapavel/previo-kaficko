@@ -10,12 +10,12 @@ declare(strict_types=1);
 error_reporting(E_ALL);
 ini_set('display_errors', '0');
 
-require_once __DIR__ . '/vendor/autoload.php';
+$phpmailerAvailable = file_exists(__DIR__ . '/vendor/autoload.php');
+if ($phpmailerAvailable) {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception as MailException;
-
-$cfg = require __DIR__ . '/config.php';
+$cfg = file_exists(__DIR__ . '/config.php') ? require __DIR__ . '/config.php' : [];
 
 // =============================================================================
 // POMOCNÉ FUNKCE
@@ -27,34 +27,42 @@ function logError(string $msg): void {
 }
 
 function sendAdminNotification(string $email, array $cfg): void {
-    $smtp       = $cfg['smtp'];
+    global $phpmailerAvailable;
     $adminEmail = $cfg['admin_email'] ?? '';
     if ($adminEmail === '') return;
 
-    try {
-        $mail = new PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host       = $smtp['host'];
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $smtp['username'];
-        $mail->Password   = $smtp['password'];
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = $smtp['port'];
-        $mail->CharSet    = 'UTF-8';
+    $subject = '[Newsletter] Nový potvrzený odběratel: ' . $email;
+    $body    = "Nový odběratel potvrdil odběr newsletteru:\n\nE-mail: {$email}\nČas: " . date('d.m.Y H:i:s') . "\n";
 
-        $mail->setFrom($smtp['from'], $smtp['from_name']);
-        $mail->addAddress($adminEmail);
-        $mail->isHTML(false);
-        $mail->Subject = '[Newsletter] Nový potvrzený odběratel: ' . $email;
-        $mail->Body    = "Nový odběratel potvrdil odběr newsletteru:\n\nE-mail: {$email}\nČas: " . date('d.m.Y H:i:s') . "\n";
-
-        $mail->send();
-    } catch (MailException $e) {
-        logError('newsletter admin notification failed: ' . $e->getMessage());
+    if ($phpmailerAvailable && !empty($cfg['smtp'])) {
+        try {
+            $smtp = $cfg['smtp'];
+            $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host       = $smtp['host'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $smtp['username'];
+            $mail->Password   = $smtp['password'];
+            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = $smtp['port'];
+            $mail->CharSet    = 'UTF-8';
+            $mail->setFrom($smtp['from'], $smtp['from_name']);
+            $mail->addAddress($adminEmail);
+            $mail->isHTML(false);
+            $mail->Subject = $subject;
+            $mail->Body    = $body;
+            $mail->send();
+            return;
+        } catch (\PHPMailer\PHPMailer\Exception $e) {
+            logError('newsletter admin notification failed: ' . $e->getMessage());
+        }
     }
+
+    $from = $cfg['smtp']['from'] ?? 'noreply@previo.cz';
+    @mail($adminEmail, $subject, $body, 'From: ' . $from);
 }
 
-function renderPage(string $title, string $heading, string $body, bool $success = true): never {
+function renderPage(string $title, string $heading, string $body, bool $success = true): void {
     $color    = $success ? '#b50000' : '#6b7280';
     $icon     = $success ? '✓' : '✕';
     $iconBg   = $success ? '#fff0f0' : '#f3f4f6';
