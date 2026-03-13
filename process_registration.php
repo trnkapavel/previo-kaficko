@@ -10,11 +10,20 @@
 
 declare(strict_types=1);
 
-// Na produkci nastav na false / zakomentuj
 error_reporting(E_ALL);
-ini_set('display_errors', '0');  // chyby nezobrazovat uživateli, logovat na server
+ini_set('display_errors', '0');
 
 header('Content-Type: application/json; charset=UTF-8');
+
+// Zachyť jakoukoliv nekontrolovanou výjimku/chybu a vrať ji jako JSON
+set_exception_handler(function (Throwable $e): void {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'message' => 'Chyba: ' . $e->getMessage() . ' (' . basename($e->getFile()) . ':' . $e->getLine() . ')',
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
+});
 
 // Načtení závislostí
 require_once __DIR__ . '/vendor/autoload.php';
@@ -168,6 +177,22 @@ $time        = $eventData['time']    ?? '09:30';
 $venue       = $eventData['venue']   ?? 'Bude upřesněno';
 $program     = is_array($eventData['program'] ?? null) ? $eventData['program'] : [];
 $programName = $type === 'connect' ? 'Dopolední blok (Connect)' : 'Odpolední blok (PRO/LITE)';
+
+// Pokud uživatel vybral konkrétní zastávku, přepiš výchozí údaje o akci daty z JSON
+if ($location) {
+    foreach (($eventData['stops'] ?? []) as $stop) {
+        if (($stop['city'] ?? '') === $location) {
+            $city  = $stop['city'];
+            $date  = $stop['date']      ?? $date;
+            $time  = $stop['time_from'] ?? $time;
+            $parts = preg_split('/\s*[–\-]\s*/u', $stop['title'] ?? '', 2);
+            if (count($parts) === 2 && trim($parts[1]) !== '') {
+                $venue = trim($parts[1]);
+            }
+            break;
+        }
+    }
+}
 
 // =============================================================================
 // 5. ODESLÁNÍ DO GOOGLE SHEETS

@@ -227,7 +227,7 @@ require __DIR__ . '/inc-page-content.php';
                         <?php endif; ?>
                     </div>
                     <div class="stop-cta">
-                        <a href="registrace.php<?= $slot_param ? ('?slot=' . urlencode($slot_param)) : '' ?>" class="btn-main stop-reg-btn">Zajistit místo</a>
+                        <a href="#registrace" class="btn-main stop-reg-btn" data-city="<?= htmlspecialchars($stop['city'] ?? '') ?>">Zajistit místo</a>
                     </div>
                 </div>
                 <?php endforeach; ?>
@@ -269,9 +269,21 @@ require __DIR__ . '/inc-page-content.php';
                 <h3 style="font-size: 1.8rem; margin-bottom: 10px; text-align: center;"><?= htmlspecialchars($reg_form_title) ?></h3>
                 <p style="text-align: center; margin-bottom: 30px; opacity: 0.7;"><?= htmlspecialchars($reg_form_desc) ?></p>
                 <form id="regForm" action="process_registration.php" method="POST">
-                    <input type="hidden" name="event_details" value="<?= htmlspecialchars(($data['city'] ?? '') . ' (' . ($data['date'] ?? '') . ')') ?>">
-                    <input type="hidden" name="location" value="<?= htmlspecialchars($data['city'] ?? '') ?>">
                     <div class="reg-form-grid">
+                        <div class="location-field full-width">
+                            <select name="location" required>
+                                <?php if (count($stops) > 1): ?><option value="">— Vyberte termín —</option><?php endif; ?>
+                                <?php foreach ($stops as $stop):
+                                    $parts = preg_split('/\s*[–\-]\s*/u', $stop['title'] ?? '', 2);
+                                    $stopVenue = (count($parts) === 2 && trim($parts[1]) !== '') ? trim($parts[1]) : '';
+                                    $isNearest = $nearest_stop && ($stop['city'] ?? '') === ($nearest_stop['city'] ?? '') && ($stop['date'] ?? '') === ($nearest_stop['date'] ?? '');
+                                ?>
+                                <option value="<?= htmlspecialchars($stop['city'] ?? '') ?>" <?= $isNearest ? 'selected' : '' ?>>
+                                    <?= htmlspecialchars($stop['date'] ?? '') ?> – <?= htmlspecialchars($stop['city'] ?? '') ?><?= $stopVenue ? ', ' . htmlspecialchars($stopVenue) : '' ?>
+                                </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
                         <input type="text" name="name" placeholder="Jméno a příjmení" required>
                         <input type="text" name="hotel" placeholder="Název ubytování" required>
                         <input type="email" name="email" placeholder="E-mail" required>
@@ -482,9 +494,10 @@ require __DIR__ . '/inc-page-content.php';
                     .finally(function() { btn.innerText = originalText; btn.disabled = false; });
                 };
                 // Pokud je reCAPTCHA načtena, získej token; jinak odešli bez něj
-                if (typeof grecaptcha !== 'undefined') {
+                var recaptchaKey = 'YOUR_SITE_KEY';
+                if (typeof grecaptcha !== 'undefined' && recaptchaKey && recaptchaKey !== 'YOUR_SITE_KEY') {
                     grecaptcha.ready(function() {
-                        grecaptcha.execute('YOUR_SITE_KEY', { action: 'register' }).then(submitForm);
+                        grecaptcha.execute(recaptchaKey, { action: 'register' }).then(submitForm).catch(function() { submitForm(''); });
                     });
                 } else {
                     submitForm('');
@@ -492,6 +505,22 @@ require __DIR__ . '/inc-page-content.php';
             });
         }
         function closeModal() { document.getElementById('successModal').style.display = 'none'; }
+
+        // Tlačítka "Zajistit místo" – pre-vyber město v selectu a scrollni na formulář
+        document.querySelectorAll('.stop-reg-btn[data-city]').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                var city = this.dataset.city;
+                var select = document.querySelector('#regForm select[name="location"]');
+                if (select && city) {
+                    for (var i = 0; i < select.options.length; i++) {
+                        if (select.options[i].value === city) { select.selectedIndex = i; break; }
+                    }
+                }
+                var reg = document.getElementById('registrace');
+                if (reg) reg.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
 
         // Newsletter – musí být v DOMContentLoaded, formulář je až za tímto scriptem
         document.addEventListener('DOMContentLoaded', function() {
