@@ -572,20 +572,13 @@ if (!isset($data) || !$data) {
             <div class="section-card" id="section-stops">
                 <h3>📍 Příští zastávky</h3>
                 <p class="hint">Úpravy zastávek uložte tlačítkem „Uložit" níže.</p>
-                <form method="POST" style="display:inline;">
-                    <input type="hidden" name="quick_action" value="add_stop">
-                    <button type="submit" class="btn-add" style="border:none;cursor:pointer;">+ Přidat zastávku</button>
-                </form>
+                <button type="button" class="btn-add" onclick="qaSubmit('add_stop')">+ Přidat zastávku</button>
                 <?php foreach ($data['stops'] ?? [] as $idx => $stop):
                     $badgesStr = is_array($stop['badges'] ?? []) ? implode(', ', $stop['badges']) : ''; ?>
                 <div class="inner-card">
                     <div class="inner-card-header">
                         <strong>Zastávka <?= $idx+1 ?></strong>
-                        <form method="POST" style="display:inline;" onsubmit="return confirm('Odebrat zastávku?');">
-                            <input type="hidden" name="quick_action" value="remove_stop">
-                            <input type="hidden" name="idx" value="<?= $idx ?>">
-                            <button type="submit" class="btn-remove" style="background:none;border:none;cursor:pointer;">Smazat</button>
-                        </form>
+                        <button type="button" class="btn-remove" onclick="qaRemove('remove_stop', <?= $idx ?>)">Smazat</button>
                     </div>
                     <div class="row-2">
                         <div><label>Město</label><input type="text" name="stops_city[]" value="<?= htmlspecialchars($stop['city'] ?? '') ?>" placeholder="Praha"></div>
@@ -612,19 +605,12 @@ if (!isset($data) || !$data) {
                 <?php if (empty($data['speakers'])): ?>
                 <p class="hint" style="margin-top:14px;">⚠️ Žádní řečníci nejsou přidáni – web zobrazuje výchozí obsah. Přidejte řečníky tlačítkem níže.</p>
                 <?php endif; ?>
-                <form method="POST" style="margin-top:16px;display:inline;">
-                    <input type="hidden" name="quick_action" value="add_speaker">
-                    <button type="submit" class="btn-add" style="border:none;cursor:pointer;">+ Přidat řečníka</button>
-                </form>
+                <button type="button" class="btn-add" style="margin-top:16px;" onclick="qaSubmit('add_speaker')">+ Přidat řečníka</button>
                 <?php foreach ($data['speakers'] ?? [] as $idx => $sp): ?>
                 <div class="inner-card">
                     <div class="inner-card-header">
                         <strong>Řečník <?= $idx+1 ?><?= !empty($sp['name']) ? ' – ' . htmlspecialchars($sp['name']) : '' ?></strong>
-                        <form method="POST" style="display:inline;" onsubmit="return confirm('Odebrat řečníka?');">
-                            <input type="hidden" name="quick_action" value="remove_speaker">
-                            <input type="hidden" name="idx" value="<?= $idx ?>">
-                            <button type="submit" class="btn-remove" style="background:none;border:none;cursor:pointer;">Smazat</button>
-                        </form>
+                        <button type="button" class="btn-remove" onclick="qaRemove('remove_speaker', <?= $idx ?>)">Smazat</button>
                     </div>
                     <input type="hidden" name="speakers_index[]" value="<?= $idx ?>">
                     <div class="row-2">
@@ -697,10 +683,7 @@ if (!isset($data) || !$data) {
             <div class="section-card" id="section-past">
                 <h3>📅 Proběhlé akce</h3>
                 <p class="hint">Karty se zobrazí v sekci historie na stránce akce.</p>
-                <form method="POST" style="display:inline;">
-                    <input type="hidden" name="quick_action" value="add_past">
-                    <button type="submit" class="btn-add" style="border:none;cursor:pointer;">+ Přidat proběhlou akci</button>
-                </form>
+                <button type="button" class="btn-add" onclick="qaSubmit('add_past')">+ Přidat proběhlou akci</button>
                 <?php foreach ($data['past_events'] ?? [] as $pi => $pe):
                     $peImg = $pe['image'] ?? '';
                     if ($peImg && strpos($peImg, 'img/') !== 0 && strpos($peImg, '/') === false) $peImg = 'img/' . $peImg;
@@ -708,11 +691,7 @@ if (!isset($data) || !$data) {
                 <div class="inner-card">
                     <div class="inner-card-header">
                         <strong>Akce <?= $pi+1 ?></strong>
-                        <form method="POST" style="display:inline;" onsubmit="return confirm('Smazat proběhlou akci?');">
-                            <input type="hidden" name="quick_action" value="remove_past">
-                            <input type="hidden" name="idx" value="<?= $pi ?>">
-                            <button type="submit" class="btn-remove" style="background:none;border:none;cursor:pointer;">Smazat</button>
-                        </form>
+                        <button type="button" class="btn-remove" onclick="qaRemove('remove_past', <?= $pi ?>)">Smazat</button>
                     </div>
                     <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start;">
                         <?php if ($peImg): ?>
@@ -742,5 +721,26 @@ if (!isset($data) || !$data) {
 
     <?php endif; ?>
 </div>
+
+<!-- Sdílený form pro quick-actions (mimo hlavní form, aby nedocházelo k nestování) -->
+<form id="qa-form" method="POST">
+    <input type="hidden" id="qa-action" name="quick_action" value="">
+    <input type="hidden" id="qa-idx"    name="idx"          value="">
+</form>
+
+<script>
+function qaSubmit(action) {
+    document.getElementById('qa-action').value = action;
+    document.getElementById('qa-idx').value    = '';
+    document.getElementById('qa-form').submit();
+}
+function qaRemove(action, idx) {
+    var label = action === 'remove_stop' ? 'zastávku' : action === 'remove_speaker' ? 'řečníka' : 'proběhlou akci';
+    if (!confirm('Odebrat ' + label + '?')) return;
+    document.getElementById('qa-action').value = action;
+    document.getElementById('qa-idx').value    = idx;
+    document.getElementById('qa-form').submit();
+}
+</script>
 </body>
 </html>
