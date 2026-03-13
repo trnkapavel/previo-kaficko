@@ -207,10 +207,15 @@ function buildEmailHtml(string $eEmail, string $eUrl): string {
     </table>
 
     <hr style="border:none;border-top:1px solid #f0f0f0;margin:0 0 24px;">
+    <p style="font-size:13px;color:#9ca3af;line-height:1.6;margin:0 0 10px;">
+      Tlačítko nefunguje nebo ho váš e-mailový klient nezobrazuje?<br>
+      Zkopírujte tento odkaz do prohlížeče:
+    </p>
+    <p style="font-size:13px;margin:0 0 16px;">
+      <a href="{$eUrl}" style="color:#b50000;word-break:break-all;">{$eUrl}</a>
+    </p>
     <p style="font-size:13px;color:#9ca3af;line-height:1.6;margin:0;">
-      Pokud jste se k odběru nepřihlásili, tento e-mail ignorujte — nic se nestane.<br>
-      Tlačítko nefunguje? Zkopírujte odkaz do prohlížeče:<br>
-      <span style="color:#b50000;word-break:break-all;">{$eUrl}</span>
+      Pokud jste se k odběru nepřihlásili, tento e-mail ignorujte — nic se nestane.
     </p>
   </td></tr>
 
