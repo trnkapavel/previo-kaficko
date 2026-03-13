@@ -83,7 +83,7 @@ function checkRateLimit(array $cfg): void {
 
     $now      = time();
     $requests = file_exists($file) ? (json_decode((string) file_get_contents($file), true) ?? []) : [];
-    $requests = array_values(array_filter($requests, fn(int $t) => $t > $now - $window));
+    $requests = array_values(array_filter($requests, function($t) use ($now, $window) { return $t > $now - $window; }));
 
     if (count($requests) >= $max) {
         fail('Příliš mnoho pokusů. Zkuste to znovu za chvíli.', 429);
