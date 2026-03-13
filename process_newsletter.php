@@ -1,9 +1,7 @@
 <?php
 /**
  * Zpracování přihlášení k newsletteru – double opt-in
- *
- * Závislosti: composer require phpmailer/phpmailer
- * Struktura odpovědi: JSON { success: bool, message?: string }
+ * Funguje s PHPMailer (SMTP) i bez něj (fallback na mail())
  */
 
 declare(strict_types=1);
@@ -13,12 +11,13 @@ ini_set('display_errors', '0');
 
 header('Content-Type: application/json; charset=UTF-8');
 
-require_once __DIR__ . '/vendor/autoload.php';
+// PHPMailer – nepovinné, fallback na mail()
+$phpmailerAvailable = file_exists(__DIR__ . '/vendor/autoload.php');
+if ($phpmailerAvailable) {
+    require_once __DIR__ . '/vendor/autoload.php';
+}
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception as MailException;
-
-$cfg = require __DIR__ . '/config.php';
+$cfg = file_exists(__DIR__ . '/config.php') ? require __DIR__ . '/config.php' : [];
 
 // =============================================================================
 // POMOCNÉ FUNKCE
@@ -37,7 +36,7 @@ function ok(string $message = ''): never {
 
 function logError(string $msg): void {
     $line = date('Y-m-d H:i:s') . ' [' . ($_SERVER['REMOTE_ADDR'] ?? '?') . '] ' . $msg . "\n";
-    file_put_contents(__DIR__ . '/error_log.txt', $line, FILE_APPEND | LOCK_EX);
+    @file_put_contents(__DIR__ . '/error_log.txt', $line, FILE_APPEND | LOCK_EX);
 }
 
 function loadSubscribers(string $file): array {
@@ -64,12 +63,12 @@ function buildBaseUrl(): string {
 // =============================================================================
 
 function checkRateLimit(array $cfg): void {
-    $rateCfg  = $cfg['rate_limit'];
-    $dir      = $rateCfg['storage_dir'];
-    $max      = $rateCfg['max_requests'];
-    $window   = $rateCfg['window_seconds'];
-    $ip       = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-    $file     = $dir . '/' . hash('sha256', 'newsletter_' . $ip) . '.json';
+    $rateCfg = $cfg['rate_limit'] ?? ['max_requests' => 3, 'window_seconds' => 300, 'storage_dir' => __DIR__ . '/tmp/rate_limits'];
+    $dir     = $rateCfg['storage_dir'];
+    $max     = $rateCfg['max_requests'];
+    $window  = $rateCfg['window_seconds'];
+    $ip      = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+    $file    = $dir . '/' . hash('sha256', 'newsletter_' . $ip) . '.json';
 
     if (!is_dir($dir)) mkdir($dir, 0755, true);
 
@@ -118,11 +117,10 @@ foreach ($subscribers as $sub) {
     if (($sub['email'] ?? '') !== $email) continue;
 
     if (($sub['status'] ?? '') === 'confirmed') {
-        // Nevyzrazuj existenci – jen potvrď
         ok('Potvrzovací e-mail jsme odeslali. Zkontrolujte svou schránku.');
     }
 
-    // Stav pending – pošli odkaz znovu (stejný token)
+    // Pending – pošli odkaz znovu (stejný token)
     sendConfirmLink($email, $sub['token'], buildBaseUrl(), $cfg);
     ok('Potvrzovací e-mail jsme znovu odeslali. Zkontrolujte svou schránku.');
 }
@@ -131,17 +129,17 @@ foreach ($subscribers as $sub) {
 // 4. ULOŽENÍ NOVÉHO ODBĚRATELE (pending)
 // =============================================================================
 
-$token = bin2hex(random_bytes(32)); // 64 znaků, kryptograficky bezpečný
+$token = bin2hex(random_bytes(32));
 
 $subscribers[] = [
-    'email'      => $email,
-    'status'     => 'pending',
-    'token'      => $token,
-    'token_expires' => time() + 48 * 3600, // platný 48 hodin
-    'subscribed' => date('Y-m-d H:i:s'),
-    'confirmed'  => null,
-    'ip'         => hash('sha256', $_SERVER['REMOTE_ADDR'] ?? ''),
-    'source'     => 'meetup-kaficko',
+    'email'         => $email,
+    'status'        => 'pending',
+    'token'         => $token,
+    'token_expires' => time() + 48 * 3600,
+    'subscribed'    => date('Y-m-d H:i:s'),
+    'confirmed'     => null,
+    'ip'            => hash('sha256', $_SERVER['REMOTE_ADDR'] ?? ''),
+    'source'        => 'meetup-kaficko',
 ];
 
 saveSubscribers($storageFile, $subscribers);
@@ -150,13 +148,8 @@ saveSubscribers($storageFile, $subscribers);
 // 5. ODESLÁNÍ POTVRZOVACÍHO E-MAILU
 // =============================================================================
 
-function sendConfirmLink(string $email, string $token, string $baseUrl, array $cfg): void {
-    $smtp       = $cfg['smtp'];
-    $confirmUrl = $baseUrl . '/confirm_newsletter.php?token=' . urlencode($token);
-    $eEmail     = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
-    $eUrl       = htmlspecialchars($confirmUrl, ENT_QUOTES, 'UTF-8');
-
-    $html = <<<HTML
+function buildEmailHtml(string $eEmail, string $eUrl): string {
+    return <<<HTML
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -176,7 +169,7 @@ function sendConfirmLink(string $email, string $token, string $baseUrl, array $c
          style="display:block;border:0;height:auto;max-width:120px;">
   </td></tr>
 
-  <!-- Hero pruh -->
+  <!-- Hero -->
   <tr><td style="background:linear-gradient(135deg,#b50000 0%,#8b0000 100%);padding:36px 40px;text-align:center;">
     <p style="color:rgba(255,255,255,0.75);font-size:12px;letter-spacing:3px;text-transform:uppercase;margin:0 0 10px 0;font-weight:600;">Previo MeetUp · Newsletter</p>
     <h1 style="color:#ffffff;font-size:26px;font-weight:800;margin:0;line-height:1.3;">Potvrďte odběr novinek</h1>
@@ -194,13 +187,11 @@ function sendConfirmLink(string $email, string $token, string $baseUrl, array $c
       <span style="font-size:14px;color:#9ca3af;">Odkaz je platný 48 hodin.</span>
     </p>
 
-    <!-- CTA tlačítko -->
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td align="center" style="padding-bottom:32px;">
         <a href="{$eUrl}"
            style="display:inline-block;background:#b50000;color:#ffffff;text-decoration:none;
-                  font-size:16px;font-weight:700;padding:16px 40px;border-radius:50px;
-                  letter-spacing:0.3px;">
+                  font-size:16px;font-weight:700;padding:16px 40px;border-radius:50px;">
           Potvrdit odběr novinek →
         </a>
       </td></tr>
@@ -228,30 +219,57 @@ function sendConfirmLink(string $email, string $token, string $baseUrl, array $c
 </body>
 </html>
 HTML;
+}
 
-    try {
-        $mail = new PHPMailer(true);
-        $mail->isSMTP();
-        $mail->Host       = $smtp['host'];
-        $mail->SMTPAuth   = true;
-        $mail->Username   = $smtp['username'];
-        $mail->Password   = $smtp['password'];
-        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $mail->Port       = $smtp['port'];
-        $mail->CharSet    = 'UTF-8';
+function sendConfirmLink(string $email, string $token, string $baseUrl, array $cfg): void {
+    $confirmUrl = $baseUrl . '/confirm_newsletter.php?token=' . urlencode($token);
+    $eEmail     = htmlspecialchars($email, ENT_QUOTES, 'UTF-8');
+    $eUrl       = htmlspecialchars($confirmUrl, ENT_QUOTES, 'UTF-8');
+    $html       = buildEmailHtml($eEmail, $eUrl);
+    $subject    = 'Potvrďte přihlášení k novinkám – Previo';
+    $altText    = "Potvrďte odběr novinek Previo kliknutím na odkaz:\n\n{$confirmUrl}\n\nOdkaz je platný 48 hodin.";
 
-        $mail->setFrom($smtp['from'], $smtp['from_name']);
-        $mail->addAddress($email);
-        $mail->addReplyTo($smtp['reply_to'] ?? $smtp['from']);
+    global $phpmailerAvailable;
 
-        $mail->isHTML(true);
-        $mail->Subject = 'Potvrďte přihlášení k novinkám – Previo';
-        $mail->Body    = $html;
-        $mail->AltBody = "Potvrďte odběr novinek Previo kliknutím na odkaz:\n\n{$confirmUrl}\n\nOdkaz je platný 48 hodin.";
+    if ($phpmailerAvailable && !empty($cfg['smtp'])) {
+        // PHPMailer přes SMTP
+        try {
+            $smtp = $cfg['smtp'];
+            $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+            $mail->isSMTP();
+            $mail->Host       = $smtp['host'];
+            $mail->SMTPAuth   = true;
+            $mail->Username   = $smtp['username'];
+            $mail->Password   = $smtp['password'];
+            $mail->SMTPSecure = \PHPMailer\PHPMailer\PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = $smtp['port'];
+            $mail->CharSet    = 'UTF-8';
+            $mail->setFrom($smtp['from'], $smtp['from_name']);
+            $mail->addAddress($email);
+            $mail->addReplyTo($smtp['reply_to'] ?? $smtp['from']);
+            $mail->isHTML(true);
+            $mail->Subject = $subject;
+            $mail->Body    = $html;
+            $mail->AltBody = $altText;
+            $mail->send();
+            return;
+        } catch (\PHPMailer\PHPMailer\Exception $e) {
+            logError('newsletter PHPMailer failed: ' . $e->getMessage() . ' – falling back to mail()');
+        }
+    }
 
-        $mail->send();
-    } catch (MailException $e) {
-        logError('newsletter confirm link failed: ' . $e->getMessage());
+    // Fallback: PHP mail()
+    $from     = $cfg['smtp']['from'] ?? 'noreply@previo.cz';
+    $fromName = $cfg['smtp']['from_name'] ?? 'Previo MeetUp';
+    $headers  = implode("\r\n", [
+        'MIME-Version: 1.0',
+        'Content-Type: text/html; charset=UTF-8',
+        'From: ' . $fromName . ' <' . $from . '>',
+        'Reply-To: ' . ($cfg['smtp']['reply_to'] ?? $from),
+    ]);
+
+    if (!@mail($email, $subject, $html, $headers)) {
+        logError('newsletter mail() failed for ' . $email);
         fail('Nepodařilo se odeslat potvrzovací e-mail. Zkuste to prosím znovu.', 500);
     }
 }

@@ -501,7 +501,12 @@ require __DIR__ . '/inc-page-content.php';
                 btn.textContent = 'Odesílám…';
                 errEl.style.display = 'none';
                 fetch('process_newsletter.php', { method: 'POST', body: new FormData(nlForm) })
-                    .then(function(r) { return r.json(); })
+                    .then(function(r) {
+                        return r.text().then(function(text) {
+                            try { return JSON.parse(text); }
+                            catch(e) { console.error('Newsletter server response:', text); throw new Error('invalid_json'); }
+                        });
+                    })
                     .then(function(data) {
                         if (data.success) {
                             wrap.style.display = 'none';
@@ -513,8 +518,11 @@ require __DIR__ . '/inc-page-content.php';
                             btn.textContent = 'Přihlásit odběr';
                         }
                     })
-                    .catch(function() {
-                        errEl.textContent = 'Chyba připojení. Zkuste to znovu.';
+                    .catch(function(err) {
+                        var msg = err.message === 'invalid_json'
+                            ? 'Chyba serveru. Zkuste to znovu nebo kontaktujte správce.'
+                            : 'Chyba připojení. Zkuste to znovu.';
+                        errEl.textContent = msg;
                         errEl.style.display = 'block';
                         btn.disabled = false;
                         btn.textContent = 'Přihlásit odběr';
